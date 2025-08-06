@@ -7,8 +7,7 @@
 
 > Coding notes.
 
-- Remix Stack
-- Alternative technologies
+- Full stack web development
 
 
 [Get Started](README.md)
