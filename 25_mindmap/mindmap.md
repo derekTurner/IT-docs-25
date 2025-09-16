@@ -8,6 +8,11 @@
 - [Tavily](https://www.tavily.com/)
 
 ### Applications
+#### App Builders
+- [Base44](https://base44.com/)
+- [Code conductor](https://codeconductor.ai/)
+- [Rocket](https://www.rocket.new/)
+#### Chatbot
 - [chatbot](https://codemaker2016.medium.com/build-your-own-chatgpt-using-google-gemini-api-1b079f6a8415)
 
 ### Assistants
@@ -76,6 +81,157 @@
 - [NotebookLM](https://notebooklm.google/)
 - [Paperguide](https://paperguide.ai/)
 - [Scholarcy](https://www.scholarcy.com/)
+
+## API
+### Design
+- [OpenAPI:](https://www.openapis.org/)
+- [Swagger:](https://swagger.io/)
+### Development
+- [FastAPI:](https://fastapi.tiangolo.com/)
+- [Hasura:](https://hasura.io/)
+- [RapidAPI:](https://rapidapi.com/)
+### Testing
+- [Postman:](https://www.postman.com)
+- [Insomnia:](https://insomnia.rest/)
+### Management
+- [Kong:](https://konghq.com/)
+- [MuleSoft Anypoint Platform:](https://www.mulesoft.com/platform/enterprise-integration)
+- [Apigee](https://cloud.google.com/apigee)
+
+## Authentication
+### Framework
+- [NextAuth.js:](https://next-auth.js.org/ )
+- [Ory:](https://www.ory.sh/)
+
+### Identity as a service
+- [Okta:](https://www.okta.com/)
+- [Firebase Authentication:](https://firebase.google.com/docs/auth)
+- [Supabase Auth:](https://supabase.com/auth)
+### Middleware
+- [Passport.js:](http://www.passportjs.org/)
+- [Express-session:](https://www.npmjs.com/package/express-session)
+### Platform
+- [Auth0:](https://auth0.com/)
+- [Clerk:](https://clerk.com/)
+### Standard
+- [JSON Web Tokens (JWT):](https://jwt.io/)
+
+## Cloud Services
+Here are the official websites for the cloud services you listed, along with other significant players and a brief explanation of each.
+
+Official Cloud Service Websites
+- [Alibaba Cloud:](https://www.alibabacloud.com/)
+- [AWS (Amazon Web Services):](https://aws.amazon.com/)
+- [Azure (Microsoft Azure):](https://azure.microsoft.com/)
+- [DigitalOcean:](https://www.digitalocean.com/)
+- [Google Cloud:](https://cloud.google.com/)
+- [Heroku:](https://www.heroku.com/)
+- [Huawei Cloud:](https://www.huaweicloud.com/)
+- [IBM Cloud:](https://www.ibm.com/cloud)
+- [Lightbits:](https://www.lightbitslabs.com/)
+- [Oracle Cloud (OCI):](https://www.oracle.com/cloud/)
+ - [Redpanda:](https://www.redpanda.com/)
+
+## Design Tools
+- [Adobe XD](https://helpx.adobe.com/uk/support/xd.html)
+- [Codux](https://www.codux.com/)
+- [Figma](https://www.figma.com/)
+  
+## Databases
+### General
+- [Convex](https://www.convex.dev/)
+- [CouchDB:](https://couchdb.apache.org/)
+- [GUN:](https://gun.eco/)
+- [Supabase:](https://supabase.com/ )
+[OrientDB:](https://orientdb.dev/)
+
+### Graph Database
+- [ArangoDB:](https://www.arangodb.com/)
+- [Grafbase:](https://grafbase.com/)
+- [Neptune:](https://aws.amazon.com/neptune/)
+- [Neo4j:](https://neo4j.com/)
+
+### In Memory & Cache
+- [Redis:](https://redis.io/)
+- [Memcached:](https://memcached.org/)
+
+### JSON 
+- [RethinkDB:](https://rethinkdb.com/)
+
+### NoSQL 
+- [Couchbase:](https://www.couchbase.com/)
+- [MongoDB:](https://www.mongodb.com/)
+- [DynamoDB:](https://aws.amazon.com/dynamodb/)
+- [Firestore:](https://firebase.google.com/products/firestore)
+
+### Query Languages
+- [GraphQL:](https://graphql.org/) 
+- [SQL](https://www.iso.org/standard/76583.html)
+
+### SQL
+- [DuckDB:](https://duckdb.org/)
+- [MySQL:](https://www.mysql.com/)
+- [MariaDB:](https://mariadb.org/)
+- [PocketBase:](https://pocketbase.io/)
+- [PostgreSQL:](https://www.postgresql.org/)
+- [SQLite](https://sqlite.org/)
+
+
+
+
+
+## Frameworks
+### Client Side
+- [alpine](https://alpinejs.dev/)
+- [angular](https://angular.io/)
+- [aurelia](https://aurelia.io/)
+- [angular](https://angular.dev/)
+- [backbone.js](https://backbonejs.org/)
+- [ember](https://emberjs.com/)
+- [flutter](https://flutter.dev/)
+- [iris](https://www.iris-go.com/)
+- [lit](https://lit.dev/)
+- [marco](https://markojs.com/)
+- [meteor](https://www.meteor.com/)
+- [mithril](https://mithril.js.org/)
+- [pheonix](https://www.phoenixframework.org/)
+- [preact](https://preactjs.com/)
+- [react](https://react.dev/)
+- [svelte](https://svelte.dev/)
+- [solidJS](https://www.solidjs.com/)
+- [stencil](https://stenciljs.com/)
+- [vue](https://vuejs.org/)
+- [vulcan](https://docs.vulcanjs.org/)
+
+### Server Side
+- [astro](https://astro.build/)
+- [blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor)
+- [axum](https://docs.rs/axum/latest/x86_64-pc-windows-msvc/axum/index.html)
+- [django](https://www.djangoproject.com/)
+- [express](https://expressjs.com/)
+- [fastify](https://fastify.dev/)
+- [featherjs](https://feathersjs.com/)
+- [flask](https://flask.palletsprojects.com/)
+- [gin](https://gin-gonic.com/)
+- [hono](https://hono.dev/)
+- [keystonejs](https://keystonejs.com/)
+- [koa.js](https://koajs.com/)
+- [hapi.js](https://hapi.dev/)
+- [laravel](https://laravel.com/)
+- [nestJS](https://nestjs.com/)
+- [next.js](https://nextjs.org/)
+- [nuxt.js](https://nuxt.com/)
+- [oak](https://oakserver.org/)
+- [pheonix](https://www.phoenixframework.org/)
+- [play](https://www.playframework.com/)
+- [react router](https://reactrouter.com/home)
+- [ruby on rails](https://rubyonrails.org/)
+- [symfony](https://symfony.com/)
+- [sailsjs](https://sailsjs.com/)
+- [spring boot](https://spring.io/projects/spring-boot)
+
+
+
 ## MCP
 ### Introduction
 - [Overview](https://www.philschmid.de/mcp-introduction)
@@ -89,3 +245,32 @@
 
 ### Applications
 - [Content Creation](https://snyk.io/articles/8-ai-mcp-servers-speeding-up-content-creator-workflows/)
+
+## Runtime Javascript Environments
+- [Node.js:](https://nodejs.org/)
+- [Deno:](https://deno.com/)
+- [Bun:](https://bun.com/)
+
+## Serverless Apps
+### Frameworks
+- [nitric](https://nitric.io/)
+- [Serverless](https://www.serverless.com/framework)
+
+### Platforms
+- [AWS Lambda:](https://aws.amazon.com/lambda/)
+- [Azure Functions:](https://azure.microsoft.com/en-gb/solutions/serverless/)
+- [Deno Deploy](https://deno.com/deploy)
+- [Hasura:](https://hasura.io/ )
+- [Netlify:](https://www.netlify.com/)
+- [nhost](https://nhost.io/)
+- [Google Cloud Functions:](https://cloud.google.com/functions)
+- [Vercel:](https://vercel.com/)
+
+
+## Web Analytics
+[Fathom Analytics:](https://usefathom.com/)
+[Google Analytics:](https://analytics.google.com/)
+[Matomo:](https://matomo.org/)
+[Plausible Analytics:](https://plausible.io/)
+[Umami:](https://umami.is/)
+
