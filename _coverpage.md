@@ -3,7 +3,7 @@
 
 ![logo](_media/icon.svg)
 
-#  <Internet Technologies 2024>
+#  <Internet Technologies 2025>
 
 > Coding notes.
 
