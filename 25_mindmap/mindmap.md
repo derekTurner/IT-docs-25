@@ -9,9 +9,25 @@
 
 ### Applications
 #### App Builders
+- [Appsmith:](https://www.appsmith.com/)
 - [Base44](https://base44.com/)
+- [Bubble:](https://bubble.io/)
 - [Code conductor](https://codeconductor.ai/)
+- [Draftbit:](https://draftbit.com/)
+- [Glide:](https://www.glideapps.com/)
+- [Nocobase:](https://www.nocobase.com/)
+- [Notion](https://www.notion.com/)
+- [OutSystems:](https://www.outsystems.com/)
+- [Retool:](https://retool.com/)
 - [Rocket](https://www.rocket.new/)
+- [Thunkable:](https://thunkable.com/)
+- [Webflow:](https://webflow.com/)
+- 
+
+#### Database AI
+- [Aitable](https://aitable.ai/)
+- [Teable](https://teable.ai/)
+
 #### Chatbot
 - [chatbot](https://codemaker2016.medium.com/build-your-own-chatgpt-using-google-gemini-api-1b079f6a8415)
 
@@ -24,7 +40,7 @@
 - [Perplexity](https://www.perplexity.ai/)
 - 
 ### Browser
-- [Arc]](https://arc.net/)
+- [Arc](https://arc.net/)
 - [Dia](https://www.diabrowser.com/)
 - [Fellou](https://fellou.ai/)
 - [Pinokio](https://pinokio.co/)
@@ -82,6 +98,11 @@
 - [Paperguide](https://paperguide.ai/)
 - [Scholarcy](https://www.scholarcy.com/)
 
+## App Builders - NoCode/LowCode
+- [Adalo:](https://www.adalo.com/)  
+- [Kodular:](https://www.kodular.io/)
+- [Sap](https://www.sap.com/uk/products/technology-platform/low-code-app-builder.html)
+
 ## API
 ### Design
 - [OpenAPI:](https://www.openapis.org/)
@@ -117,9 +138,7 @@
 - [JSON Web Tokens (JWT):](https://jwt.io/)
 
 ## Cloud Services
-Here are the official websites for the cloud services you listed, along with other significant players and a brief explanation of each.
 
-Official Cloud Service Websites
 - [Alibaba Cloud:](https://www.alibabacloud.com/)
 - [AWS (Amazon Web Services):](https://aws.amazon.com/)
 - [Azure (Microsoft Azure):](https://azure.microsoft.com/)
@@ -133,9 +152,10 @@ Official Cloud Service Websites
  - [Redpanda:](https://www.redpanda.com/)
 
 ## Design Tools
-- [Adobe XD](https://helpx.adobe.com/uk/support/xd.html)
+- [Canva](https://www.canva.com/)
 - [Codux](https://www.codux.com/)
 - [Figma](https://www.figma.com/)
+- [Uxpin](https://www.uxpin.com/)
   
 ## Databases
 ### General
@@ -143,7 +163,7 @@ Official Cloud Service Websites
 - [CouchDB:](https://couchdb.apache.org/)
 - [GUN:](https://gun.eco/)
 - [Supabase:](https://supabase.com/ )
-[OrientDB:](https://orientdb.dev/)
+- [OrientDB:](https://orientdb.dev/)
 
 ### Graph Database
 - [ArangoDB:](https://www.arangodb.com/)
@@ -176,7 +196,16 @@ Official Cloud Service Websites
 - [PostgreSQL:](https://www.postgresql.org/)
 - [SQLite](https://sqlite.org/)
 
+### NoCode/LowCode databases
+- [Airtable:](https://airtable.com/)
+- Baserow:](https://baserow.io/)
+- [Baserow:](https://baserow.io/)
+- [NocoDB:](https://www.nocodb.com/)
+- [Rowy](https://rowy.io/)
+- [Xano:](https://www.xano.com/)
+- 
 
+  
 
 
 
