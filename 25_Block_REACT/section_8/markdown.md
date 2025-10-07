@@ -333,6 +333,6 @@ Try to create a github page based on a topic in internet technologies including 
 
 React has a component which can render markdown.  
 
-Retool have a tutorial for [react markdown](https://retool.com/blog/react-markdown-component-the-easy-way-to-create-rich-text/)
+Contentful have a tutorial for [react markdown](https://www.contentful.com/blog/react-markdown/)
 
-A longer read with more detail is at [copy cat](https://www.copycat.dev/blog/react-markdown/).
+The details can be seenon the github page [react-markdown](https://github.com/remarkjs/react-markdown#readme).
