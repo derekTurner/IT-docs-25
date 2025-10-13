@@ -4,35 +4,47 @@
 
 The object here is to demonstrate that Svelte can be used as an effective alternative to React to display the list of users from the typicode API.  You can be the judge of whether the syntax is more or less comfortable to work with.  If you want to go further you can extend to read from other typicode API content.
 
-To start off I will make a new github repository named SvelteTS24 and clone this to my local machine.
+To start off I will make a new github repository named SvelteTS25 and clone this to my local machine.
+
+Check that Docker is running and that you have the Dev Containers extension installed in Visual Studio Code.
 
 Within visual studio code open this folder in a container which is for node and typescript.
 
+Add the container configuration files to the workspace.
+
+![add container configruation files](images/configFile.png)
+
+Select Node.js and Typescript.
+
 ![container type](images/containerType.png)
 
-Choose the recent version of node.
+Choose the current LTS version of node.
 
-![bullseye](images/bullseye.png)
+![bookworm](images/nodeVersion.png)
 
 Choose no additional options.
 
 ![no options](images/noOptions.png)
 
-Allow time for the DevContainer to start, then check the node version.
+Don't need any optional files
+
+![no optional files](images/OptionalFiles.png)
+
+Allow time for the DevContainer to populate.  Watch the log to see this loading.  When it is ready, check the node version.
 
 > node --version
 
 ```code
-v20.3.1
+v22.9.0
 ```
 
-Now create a svelte app using the latest version.
+Now [create a svelte app](https://svelte.dev/docs/svelte/getting-started) using sveltKit.  This is powered by vite so won't need a separate vite installation. 
 
-> npm create svelte@latest my-app
+> npx sv create myapp
 
 ```code
 Need to install the following packages:
-  create-svelte@5.1.1
+sv@0.9.8
 Ok to proceed? (y) 
 ```
 
@@ -41,76 +53,256 @@ Yes to proceed (y).
 Select a skeleton project rather than a demo file or library project.
 
 ```code
-create-svelte version 5.1.1
-
-┌  Welcome to SvelteKit!
+┌  Welcome to the Svelte CLI! (v0.9.8)
 │
-◆  Which Svelte app template?
-│  ○ SvelteKit demo app
-│  ● Skeleton project (Barebones scaffolding for your new SvelteKit app)
-│  ○ Library project
+◆  Which template would you like?
+│  ● SvelteKit minimal (barebones scaffolding for your
+new app)
+│  ○ SvelteKit demo
+│  ○ Svelte library
 └
 ```
+Presse Enter to select the skeleton project.
 
 Use Typescript
 
 ```code
- Welcome to SvelteKit!
-│
-◇  Which Svelte app template?
-│  Skeleton project
+ Which template would you like?
+│  SvelteKit minimal
 │
 ◆  Add type checking with TypeScript?
-│  ○ Yes, using JavaScript with JSDoc comments
 │  ● Yes, using TypeScript syntax
+│  ○ Yes, using JavaScript with JSDoc comments
 │  ○ No
+└
 ```
+Press Enter to select Typescript.
 
 Add prettier code formatting.
 
 ```code
-Select additional options (use arrow keys/space bar)
-│  ◻ Add ESLint for code linting
-│  ◼ Add Prettier for code formatting
-│  ◻ Add Playwright for browser testing
-│  ◻ Add Vitest for unit testing
+What would you like to add to your project? (use arrow
+keys / space bar)
+│  ◻ prettier (formatter - https://prettier.io)
+│  ...
+│  ◻ devtools-json
+│  ◻ sveltekit-adapter
+│  ◻ prettier
+│  ◻ eslint
+│  ◻ vitest
+│  ◻ playwright
+│  ◻ tailwindcss
+│  ◻ sveltekit-adapter
+│  ◻ devtools-json
+│  ◻ drizzle
+│  ◻ lucia
+│  ◻ mdsvex
+│  ◻ paraglide
+│  ◻ storybook (frontend workshop -
+https://storybook.js.org)
+└
 ```
-
-Code is ready!
+Choose a packate manager, I will use npm.
 
 ```code
-  Your project is ready!
-
-✔ Typescript
-  Inside Svelte components, use <script lang="ts">
-
-✔ Prettier
-  https://prettier.io/docs/en/options.html
-  https://github.com/sveltejs/prettier-plugin-svelte#options
-
-Install community-maintained integrations:
-  https://github.com/svelte-add/svelte-add
-
-Next steps:
-  1: cd my-app
-  2: npm install
-  3: git init && git add -A && git commit -m "Initial commit" (optional)
-  4: npm run dev -- --open
-
-To close the dev server, hit Ctrl-C
-
-Stuck? Visit us at https://svelte.dev/chat
+◆  Which package manager do you want to install dependencies
+with?
+│  ○ None
+│  ● npm
+│  ○ yarn
+│  ○ pnpm
+│  ○ bun
+│  ○ deno
+└
 ```
+Operation failed!  The error message suggests tha the node version is too old and needs to be updated to 22.12 or later.  
 
-Don't bother to update the npm version.
+To change the node version  the mode version manager nvm can be used.  Install nvm from [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) using the instal script.
+
+> curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+
+Close and reopen your terminal to start using nvm.
+
+> nvm install 22.20.0
 
 ```code
-npm notice 
-npm notice New major version of npm available! 9.6.7 -> 10.2.0
-npm notice Changelog: https://github.com/npm/cli/releases/tag/v10.2.0
-npm notice Run npm install -g npm@10.2.0 to update!
-npm notice 
+Now using node v22.20.0 (npm v10.9.3)
 ```
+### Setup again!
+
+> npx sv create myapp
+
+```code
+┌  Welcome to the Svelte CLI! (v0.9.8)
+│
+◆  Directory not empty. Continue?
+│  ○ Yes / ● No
+└
+```
+Choose yes to continue.
+
+```code
+◆  Which template would you like?
+│  ● SvelteKit minimal (barebones scaffolding for your new app)
+│  ○ SvelteKit demo
+│  ○ Svelte library
+└
+```
+Press Enter to select the skeleton project.
+
+```code
+ Which template would you like?
+│  SvelteKit minimal
+│
+◆  Add type checking with TypeScript?
+│  ● Yes, using TypeScript syntax
+│  ○ Yes, using JavaScript with JSDoc comments
+│  ○ No
+└
+```
+Press Enter to select Typescript.
+
+```code
+◆  What would you like to add to your project? (use arrow keys / space bar)
+│  ◻ prettier (formatter - https://prettier.io)
+│  ◻ eslint
+│  ◻ vitest
+│  ◻ playwright
+│  ◻ tailwindcss
+│  ◻ sveltekit-adapter
+│  ◻ devtools-json
+│  ◻ drizzle
+│  ◻ lucia
+│  ◻ mdsvex
+│  ◻ paraglide
+│  ◻ storybook
+└
+```
+Choose prettier with space bar and press Enter.
+
+```code
+Successfully setup add-ons
+│
+◆  Which package manager do you want to install dependencies with?
+│  ○ None
+│  ● npm
+│  ○ yarn
+│  ○ pnpm
+│  ○ bun
+│  ○ deno
+└
+```
+Choose npm and press Enter.
+
+```code
+◇  Installing dependencies with npm...
+
+◆  Successfully installed dependencies
+│
+◇  Successfully formatted modified files
+│
+◇  What's next? ───────────────────────────────╮
+│                                              │
+│  📁 Project steps                            │
+│                                              │
+│    1: cd myapp                               │
+│    2: npm run dev -- --open                  │
+│                                              │
+│  To close the dev server, hit Ctrl-C         │
+│                                              │
+│  Stuck? Visit us at https://svelte.dev/chat  │
+│                                              │
+├──────────────────────────────────────────────╯
+│
+└  You're all set!
+```
+
+Ok so to see the default svelte app.
+
+> cd myapp
+> npm run dev -- --open
+
+```code
+> myapp@0.0.1 dev
+> vite dev --open
+
+10:40:51 PM [vite] (client) Forced re-optimization of dependencies
+
+  VITE v7.1.9  ready in 13981 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+```
+
+Nearly there.
+
+> CTRL + C to stop the server.
+
+Look at the package.json file in the myapp folder.
+
+```json
+{
+	"name": "myapp",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"format": "prettier --write .",
+		"lint": "prettier --check ."
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^6.1.0",
+		"@sveltejs/kit": "^2.43.2",
+		"@sveltejs/vite-plugin-svelte": "^6.2.0",
+		"prettier": "^3.6.2",
+		"prettier-plugin-svelte": "^3.4.0",
+		"svelte": "^5.39.5",
+		"svelte-check": "^4.3.2",
+		"typescript": "^5.9.2",
+		"vite": "^7.1.7"
+	}
+}
+```
+
+Edit the dev and preview scripts to add --host to allow access from outside the container.
+
+```json
+  "scripts": {
+    "dev": "vite dev --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+```
+Now run the dev server again.
+
+> npm run dev
+
+```code
+> myapp@0.0.1 dev
+> vite dev --host
+
+
+  VITE v7.1.9  ready in 13575 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://172.17.0.2:5173/
+  ➜  press h + enter to show help> 
+```
+CTRL + Click on the local address to see the default svelte app in the browser.
+
+![welcome](images/welcome.png)
+
+> CTRL + C
+
+
+
+
 
 > cd my-app
 
@@ -121,7 +313,13 @@ Install the dependancies currently in package.json
 This takes a while.
 
 ```code
-12 packages are looking for funding
+> myapp@0.0.1 prepare
+> svelte-kit sync || echo ''
+
+
+added 1 package, and audited 58 packages in 16s
+
+8 packages are looking for funding
   run `npm fund` for details
 
 3 low severity vulnerabilities
@@ -131,23 +329,10 @@ To address all issues (including breaking changes), run:
 
 Run `npm audit` for details.
 ```
-Svelte has onlyrecently moved to version 4 and has gone up in version to 4.2.1 so adjust my-app/package.json to use the latest version.
 
-```json
-	"devDependencies": {
-		"@sveltejs/adapter-auto": "^2.0.0",
-		"@sveltejs/kit": "^1.20.4",
-		"prettier": "^2.8.0",
-		"prettier-plugin-svelte": "^2.10.1",
-		"svelte": "^4.2.1",
-		"svelte-check": "^3.4.3",
-		"tslib": "^2.4.1",
-		"typescript": "^5.0.0",
-		"vite": "^4.4.2"
-	},
-```
+Now to add the [sveltestrap](https://github.com/sveltestrap/sveltestrap) library to use bootstrap 5 components in svelte.  
 
-Sveltestrap is not fully updated to Svelte version 4 so as a work around cd .. back to the folder SvelteTS23 and add add a package.json file.
+> npm install svelte @sveltestrap/sveltestrap
 
 ```json
 {
@@ -161,15 +346,45 @@ Sveltestrap is not fully updated to Svelte version 4 so as a work around cd .. b
 
 > npm install
 
-Now change directory back to my-app.
+```code
+added 2 packages, and audited 60 packages in 7s
 
->cd my-app
+9 packages are looking for funding
+  run `npm fund` for details
 
-> npm install --save sveltestrap svelte
+3 low severity vulnerabilities
 
-Finally install the axios library to retrieve json data from a rest API.
+To address all issues (including breaking changes), run:
+  npm audit fix --force
 
-> npm i axios@1.5.1
+Run `npm audit` for details.
+```
+
+
+Finally install the [axios library](https://axios-http.com/) to retrieve json data from a rest API.
+
+> npm i axios
+
+```code
+added 23 packages, and audited 83 packages in 3s
+
+15 packages are looking for funding
+  run `npm fund` for details
+
+3 low severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+```
+Package,json now includes:
+```json
+	"dependencies": {
+		"@sveltestrap/sveltestrap": "^7.1.0",
+		"axios": "^1.12.2"
+	}
+```
 
 ### Svelte code
 
@@ -177,11 +392,10 @@ Check the contents of app.html in the src folder
 
 app.html
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
 	</head>
@@ -190,20 +404,25 @@ app.html
 	</body>
 </html>
 ```
+It's essential to note that Bootstrap 5 components do not come with Bootstrap styles preloaded, so you'll need to add the stylesheet manually. Here's how you can add them.
 
-Then start to edit +page.svelte in the routes folder.
+In the myapp/routes folder edit +page.svelte.
 
+**myapp/routes/+page.svelte**
 ```javascript
 <svelte:head>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </svelte:head>
 ```
-Sveltestrap is only a wrapper for bootstrap and does not include the bootstrap CSS.  This can be included in a number of different ways described on the sveltestrap site, but until versioning is completely compatible with Svelte 4 this is a reliable way to bring the css in from a contend delivery network.
 
 This code will insert into the head of the html file.
 
-```javascript          
+A useful helper will be to load the Vscode svelte extension to provide syntax highlighting and code completion.  This will be installed in the dev container.
 
+![svelte extension](images/svelteforVScode.png)
+
+**myapp/routes/+page.svelte**
+```javascript          
 <script lang="ts">
   import { onMount } from "svelte";
   import axios from "axios";
@@ -213,20 +432,18 @@ This code will insert into the head of the html file.
     CardHeader,
     CardSubtitle,
     CardText,
-    CardTitle } from "sveltestrap"; 
+    CardTitle } from '@sveltestrap/sveltestrap';
 ```
 The lang="ts" identifies this script as typescript.
+
+The Card elements are imports from the sveltstrap library.  [The components available are listed](https://sveltestrap.js.org/?path=/docs/sveltestrap-overview--docs).
 
 The import of onMount allows svelte to perform programmed functions when the page loads.
 
 Axios is the library to retrieve JSON from the rest API.  This can be used as an alternative to fetch as discussed by [David Adeneye](https://www.sitepoint.com/svelte-fetch-data/).
 
-The Card elements are imports from the sveltstrap library.  [The components available are listed](https://sveltestrap.js.org/v4/?path=/story/components--get-started).
-
-
-
+**myapp/routes/+page.svelte**
 ```javascript
-
 const endpoint = "https://jsonplaceholder.typicode.com/users";
 
 interface Company{
@@ -304,7 +521,7 @@ The full listing is
     CardHeader,
     CardSubtitle,
     CardText,
-    CardTitle } from "sveltestrap"; 
+    CardTitle } from '@sveltestrap/sveltestrap';
 
 
 const endpoint = "https://jsonplaceholder.typicode.com/users";
@@ -362,4 +579,4 @@ The working output is then:
 
 ![user list](images/userList.png)
 
-The Svelte code is pretty straight forward, the biggest difficulty was the versioning changes around the style sheet code, that should be fixed in time.
+The Svelte code is pretty straight forward, the biggest difficulty was the versioning changes around npm.
