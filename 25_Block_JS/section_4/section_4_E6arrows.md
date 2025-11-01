@@ -2,12 +2,7 @@
 
 Arrow functions are a compact way of writing anonymous functions and attaching them to a constant object. Functions attached to constants need to be defined before they are used.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 // standard syntax
@@ -30,7 +25,7 @@ l4 = arrow(l2, l3);
 console.log(l4);
 ```
 
-</div>
+
 
 Arrow functions will be useful with arrays
 
@@ -38,12 +33,7 @@ Arrow functions will be useful with arrays
 
 The 'find()' method finds the first element in an array which is returned by a test function
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const hero = ["flash", 2000, "generate lightening"];
@@ -55,18 +45,13 @@ let number = hero.find((value, index, array) => {
 console.log(number);
 ```
 
-</div>
+
 
 ### Array.findIndex()
 
 The 'findIndex()' method finds the index of first element in an array which is returned by a test function
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const hero = ["flash", 2000, "generate lightening"];
@@ -78,18 +63,13 @@ let number = hero.findIndex((value, index, array) => {
 console.log(number);
 ```
 
-</div>
+
 
 ### Array.filter()
 
 The `array.filter()` method returns an array of all the elements where a test function returns true.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const hero = ["flash", 2000, "generate lightening"];
@@ -101,7 +81,7 @@ let words = hero.filter((value, index, array) => {
 console.log(words);
 ```
 
-</div>
+
 
 ### Array.map()
 
@@ -109,12 +89,7 @@ The map method allows the values of an array to be passed to a function and a ne
 
 Syntax to pass an argument into the function works when the function is anonymous and the argument after the {} is passed in as this. So here you can change the value of modula to see different results.  Note that `this` is not used in the function.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const data = [1, 2, 3, 4, 5, 6];
@@ -128,18 +103,13 @@ let modn = data.map((value) => {
 console.log(modn);
 ```
 
-</div>
+
 
 ### Array.reduce()
 
 This function returns a single value which is the result of a function applied to all the array elements
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const data = [1, -2, 3, -4, 5, -6, 7, -8, 9, -10];
@@ -151,7 +121,7 @@ let calc = data.reduce((total, currentValue) => {
 
 console.log(calc);
 ```
-</div>
+
 
 
 ### Reference

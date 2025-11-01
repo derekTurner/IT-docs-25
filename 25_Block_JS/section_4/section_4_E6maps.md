@@ -12,12 +12,7 @@ Maps are data structures which like Objects hold name value pairs, but they have
 
 This allows an array to be created from an object with a length or which is iterable using forEach.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const points = new Map;
@@ -34,17 +29,12 @@ const listPoints = ((value, key, map) => {console.log(`map.get('${key}') = ${val
 points.forEach(listPoints)
 
 ```
-</div>
+
 
 The points per item can now be combined with an inventory to work up a points tally.
 
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const points = new Map;
@@ -68,7 +58,7 @@ return totalPoints
 
 pointInventory(points,"coin", "ring", "coin", "urn", "plate","goblet","chalice");
 ```
-</div>
+
 
 
 
@@ -80,12 +70,7 @@ Even though a set is a constant object you can still add to its contents.
 
 Sets are the stuff of venn diagrams and set operations are `isSuperset()`, `union()`, `intersection()`, `difference()`, `symmetricDifference()`, 
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const gold   = new Set(["coin", "chalice", "ring", "urn", "plate"]);
@@ -100,16 +85,11 @@ if (pewter.has("jug")) console.log("pewter jug is in the set");
 
 for (const item of silver){console.log(`silver ${item}`)};
 ```
-</div>
+
 
 The set operations are then illustrated.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const gold   = new Set(["coin", "chalice", "ring", "urn", "plate"]);
@@ -171,11 +151,7 @@ console.log(`intersection ${intersection(pewter, gold)}`  )  ;
 console.log(`symmetricDifference ${symmetricDifference(pewter, gold)}` );
 console.log(`difference ${difference(pewter, gold)}`  )     ;     
 ```
-</div>
-
-
-
-### Reference
+reference
 
 [W3schools maps](https://www.w3schools.com/js/js_object_maps.asp)
 [MDN sets](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)

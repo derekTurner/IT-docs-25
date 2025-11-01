@@ -11,27 +11,17 @@ Destructuring is the process of drawing items from an array structure into indiv
 
 This allows an array to be created from an object with a length or which is iterable.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 var notes = Array.from("ABCDEFG");
 console.log(notes);
 ```
-</div>
+
 
 A JSON object itself is not iterable, but the iterable keys or values can be generated from it and these can be used with Array.from()
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const box = {material:"metal", width:10, height:6, depth:3}
@@ -43,7 +33,7 @@ console.log(keyArray);
 var valueArray = Array.from(Object.values(box));
 console.log(valueArray);
 ```
-</div>
+
 
 ### Array.keys() with for/of loop
 
@@ -51,12 +41,7 @@ An array is an object so the keys and values can be extracted from it in a simil
 
 Note that once an iterator has been used the further calls to .next will return {done:true} and the iterator cant be used again.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const hero = ["flash",2000, "generate lightening"];
@@ -65,19 +50,14 @@ const heroIterator = hero.keys();
 for (let key of heroIterator){console.log(key+"  "+hero[key])};
 console.log(heroIterator.next());
 ```
-</div>
+
 
 
 This points to a difference between arrays and objects, arrays are always indexed by number while objects are indexed by strings.
 
 To iterate multiple times the iterator could be placed into a functtion.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const hero = ["flash",2000, "generate lightening"];
@@ -92,18 +72,13 @@ iterate(hero);
 iterate(hero);
 iterate(hero);
 ```
-</div>
+
 
 ### Array.find()
 
 The 'find()' method finds the first element in an array which is returned by a test function
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const hero = ["flash",2000, "generate lightening"];
@@ -117,18 +92,13 @@ function testFunction(value, index, array) {
 
 console.log(number);
 ```
-</div>
+
 
 ### Array.findIndex()
 
 The 'findIndex()' method finds the index of first element in an array which is returned by a test function
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const hero = ["flash",2000, "generate lightening"];
@@ -142,18 +112,13 @@ function testFunction(value, index, array) {
 
 console.log(number);
 ```
-</div>
+
 
 ### Array.filter()
 
 The `array.filter()` method returns an array of all the elements where a test function returns true.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const hero = ["flash",2000, "generate lightening"];
@@ -167,18 +132,13 @@ function testFunction(value, index, array) {
 
 console.log(words);
 ```
-</div>
+
 
 ### Array.map()
 
 The map method allows the values of an array to be passed to a function and a new array to be formed from the returned values.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const data = [1,2,3,4,5,6];
@@ -192,15 +152,10 @@ function mod (value) {
 
 console.log(mod3);
 ```
-</div>
+
 Syntax to pass an argument into the function works when the function is anonymous and the argument after the {} is passed in as this.  So here you can change tohe value of modula to see different results.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const data = [1,2,3,4,5,6];
@@ -213,18 +168,13 @@ let modn = data.map(function (value) {
 
 console.log(modn);
 ```
-</div>
+
 
 ### Array.reduce()
 
 This function returns a single value which is the result of a function applied to all the array elements
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const data = [1,-2,3,-4,5,-6,7,-8,9,-10];
@@ -236,16 +186,11 @@ function reducerFunction(total, currentValue) {
 
 console.log(calc);
 ```
-</div>
+
 
 If the initial value is passed in to an anonymous function the calculation can start from a non-zero value.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const data = [1,-2,3,-4,5,-6,7,-8,9,-10];
@@ -258,7 +203,7 @@ let calc = data.reduce(function (total, currentValue) {
 
 console.log(calc);
 ```
-</div>
+
 
 
 

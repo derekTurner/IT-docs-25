@@ -4,12 +4,7 @@
 
 Template strings allow long winded concatenation to be replaced with template substitutions.  These string literals use the `tick` rather than the 'apostrophe' or "speech mark".
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 var player = { name: "Flash", age: 2000, ability: "generate a ligntening stike" };
@@ -21,16 +16,11 @@ var string = player.name + " is " + player.age + " years old and is able to" + p
 var string = `${player.name} is ${player.age} years old and has the ability to ${player.ability}`;
 ```
 
-</div>
+
 
 Usage inside a function;
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 var hero = { name: "Flash", age: 2000, ability: "generate a ligntening stike" };
@@ -45,16 +35,11 @@ console.log(showPlayerDetails(hero));
 console.log(showPlayerDetails(villain));
 ```
 
-</div>
+
 
 Template strings can include html elements and can print multiple lines as whitespace, newlines and indentation are reproduced. ( The console log cannot fully render this, but a document.write element would.)
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 var hero = { name: "Flash", age: 2000, ability: "generate a ligntening stike" };
@@ -70,4 +55,3 @@ console.log(showPlayerDetails(hero));
 console.log(showPlayerDetails(villain));
 ```
 
-</div>

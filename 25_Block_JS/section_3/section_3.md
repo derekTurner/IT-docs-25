@@ -12,12 +12,6 @@ Essential elements of functional programming are:
 
 A first class function is one which can be treated as a variable
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
 
 ```javascript
 const firstClass = () => {
@@ -27,16 +21,11 @@ const firstClass = () => {
 let answer = firstClass();
 ```
 
-</div>
+
 
 Just like a variable a function can be passed as a parameter to a second function. In this case it is the returned value from the first which is passed into the second function
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const cube = (z) => {
@@ -50,18 +39,13 @@ const statement = (volume) => {
 let answer = statement(cube(4));
 ```
 
-</div>
+
 
 ## Higher order
 
 A Function which recieves a function as and argument (like answer in the code above) or a function which returns a function is called a higher order function.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const power = (z) => {
@@ -76,7 +60,7 @@ const area = power(2);
 let c = area(4);
 ```
 
-</div>
+
 
 Edit the last line of this code to display the volume(4).
 
@@ -84,12 +68,7 @@ Edit the last line of this code to display the volume(4).
 
 Declarative code avoids counters and uses iterators so that the code expresses what is to be done rather than the steps to do an action.  The map method of an array is an example of this.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 // Declarative
@@ -110,7 +89,7 @@ const numVolume = nums.map(volume);
 let a = numVolume;
 ```
 
-</div>
+
 
 
 ## Purity
@@ -127,12 +106,7 @@ Note that the order of execution for the function effect runs function g first a
 
 In the code which follows try editting a to use the compose 1 - 4 functions in turn.
 
-<div
-  data-runkit
-  data-runkit-evaluate-on-load="true"
-  data-runkit-gutter-style="none"
-  data-runkit-node-version="18"
->
+
 
 ```javascript
 const effect = (f, g) => {
@@ -158,5 +132,3 @@ const compose4 = bigEffect(add1, times2, negate);
 
 let a = compose1(2);
 ```
-
-</div>
