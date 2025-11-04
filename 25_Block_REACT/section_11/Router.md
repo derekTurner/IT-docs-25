@@ -587,7 +587,7 @@ Close the development server
 
 Before proceeding check that the case of any .png or .PNG images is correct.  The development server is not case sensitive, but the build process is.
 
-In the public folder make a folder src5 to match the one already used and copy the assets into this.
+In the public folder make a folder src to match the one already used and copy the assets into this.
 
 The build process uses the assets in the public folder.
 
