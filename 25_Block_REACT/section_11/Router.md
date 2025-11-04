@@ -161,7 +161,7 @@ Yes install with npm and start now.
 │
 ◇  Installing dependencies with npm...
 ```
-> cd vite-project 
+> **cd vite-project** 
 
 and note the contents of package json
 
@@ -209,7 +209,7 @@ Edit the dev and preview scripts with --host to allow access from outside the co
     "lint": "eslint .",
     "preview": "vite preview --host"
   },
-
+```
 
 This app will use the [react router version 7](https://reactrouter.com/en/main) so still in the vite-project folder install the required packages.
 
@@ -234,6 +234,7 @@ Package json at the root of the react24 folder should now include
         "react-router-bootstrap": "^0.26.3",
         "react-router-dom": "^7.9.5"
       },
+```      
 
 Now add markdown handling, just for this particular project
  
