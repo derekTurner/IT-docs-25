@@ -353,9 +353,9 @@ async function bookCreate(books, title, summary, isbn , authors, genres) {
   let newBook = new Book({
     title: title,
     summary: summary,
-    authors: authors,
+    author: authors,
     isbn: isbn,
-    genres: genres
+    genre: genres
   });
   await newBook.save()
   .then( user =>{console.log('Book created:', user._id);books.push(user._id);console.log(books)})
