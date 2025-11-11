@@ -4,8 +4,8 @@
 * [<h2>Client Side React</h2>](25_Block_REACT/README.md)
 * 
 * [<h2>Javascript features</h2>](25_Block_JS/README.md)
-* <!-- 
-* [<h2>Full Stack</h2>](24_Block_REMIX/README.md)
+* 
+* [<h2>Full Stack</h2>](25_Block_REACTROUTER/README.md)
 
 
 
@@ -14,4 +14,4 @@
 * 
 * 
 
--->
+
