@@ -438,8 +438,23 @@ Vite takes care of building the project and running it so typescript is set to "
 
 From here the [tutorial online](https://reactrouter.com/tutorials/address-book#setup) can be followed.
 
-The file app/root.tsx is the first component rendered and it contains the global layout for the application. 
+### The root route module
 
+The file app/root.tsx is the first component rendered and it contains the global layout for the application. This is referred to as the root route module.  Note that App() function, at this stage only returns the sidebar component for the application.
+
+app/root.tsx is ths only mandatory route in the application and is the parent route for all other routes.
+
+Routes which are children of the root route module are created in the app/routes folder.  These will then be rendered inside an <Outlet> component in the root route module. (Outlet component not shown at this stage of the tutorial).
+
+The root route module also allows a layout component to be exported.  This is a special export which acts as the document's "app shell" for all route components, HydrateFallback, and ErrorBoundary.
+
+The layout component wraps the entire application in an html document structure and takes a children prop which is the defaut export of the root route module, in this case the App() function.
+
+The layout component is rendered first and the children prop is rendered inside the body tag.  This allows the application to have a consistent html structure across all routes and also for common elements such as meta tags and stylesheets to be included in one place.
+
+The error boundary component is also a special export which is rendered when the application throws an error.  This allows for a consistent error handling experience across all routes.
+
+** app/root.tsx **
 ```javascript
 import {
   Form,
@@ -557,11 +572,21 @@ export function ErrorBoundary({
 
 The function App() returns the sidebar component for the application.  This contains a form to search contacts and a form to add a new contact.  There is also a navigation component which contains links to two contacts.
 
-The function Layout() is a special export for the root route.  It acts as the document's "app shell" for all route components.  
+To start the application:
+
+> cd contacts
+
+> npm run dev
+
+This displays a sideber with links to two contacts which can be clicket to activate href links, but these links do not yet work as there are no child route modules created.
+
+### Child route modules
+
+Creating child routes for the root route module is done by creating new route modules in the app/routes folder.
 
 To create a route to match the url /contacts/1 a new file routes.tsx is created in the app/routes folder.
 
-** routes.tsx **
+** app/routes.tsx **
 ```javascript
 import type { RouteConfig } from "@react-router/dev/routes";
 import { route } from "@react-router/dev/routes";
@@ -570,11 +595,13 @@ export default [
   route("contacts/:contactId", "routes/contact.tsx"),
 ] satisfies RouteConfig;
 ```
-If a route follows the pattern contacts/123 then the value 123 will be passed to the contactId parameter in the route.
+The colon after the url makes the route dynamic.  If a route follows the pattern contacts/123 then the value 123 will be passed to the contactId parameter in the route.
 
-The toute targets the route module contact.tsx which is created in the app/routes folder.
+The route targets the route module contact.tsx which is created in the app/routes folder.
 
-** app/routes/contct.tsx**
+In this version of the tutorial the contact data is hard coded in the contact.tsx file. This is displayed and then forms are provided to edit or delete the contact. (The edit and delete functions are not yet implemented at this stage of the tutorial).
+
+** app/routes/contact.tsx**
 ```javascript
 import { Form } from "react-router";
 
@@ -674,7 +701,956 @@ function Favorite({
 }
 ```
 
-... continue to follow the tutorial online on the react router site ...
+The contact.tsx file exports a default function Contact() which displays the contact data.  There is also a Favorite() component which displays a star icon to indicate if the contact is a favorite or not.  Hoewever this is a child route so the root route module needs an outlet component to render the child route.
 
 
+To do this the root route module app/root.tsx is updated to include an Outlet component from react-router.  This is placed at the end of the App() function to render the child routes inside the body of the application.
+
+** app/root.tsx **
+```javascript
+import {
+  Form,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  isRouteErrorResponse,
+} from "react-router";
+import type { Route } from "./+types/root";
+
+import appStylesHref from "./app.css?url";
+
+export default function App() {
+  return (
+    <>
+      <div id="sidebar">
+        <h1>React Router Contacts</h1>
+        <div>
+          <Form id="search-form" role="search">
+            <input
+              aria-label="Search contacts"
+              id="q"
+              name="q"
+              placeholder="Search"
+              type="search"
+            />
+            <div aria-hidden hidden={true} id="search-spinner" />
+          </Form>
+          <Form method="post">
+            <button type="submit">New</button>
+          </Form>
+        </div>
+        <nav>
+          <ul>
+            <li>
+              <a href={`/contacts/1`}>Your Name</a>
+            </li>
+            <li>
+              <a href={`/contacts/2`}>Your Friend</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div id="detail">
+        <Outlet />
+      </div>
+    </>
+  );
+}
+
+// The Layout component is a special export for the root route.
+// It acts as your document's "app shell" for all route components, HydrateFallback, and ErrorBoundary
+// For more information, see https://reactrouter.com/explanation/special-files#layout-export
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href={appStylesHref} />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+// The top most error boundary for the app, rendered when your app throws an error
+// For more information, see https://reactrouter.com/start/framework/route-module#errorboundary
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  let message = "Oops!";
+  let details = "An unexpected error occurred.";
+  let stack: string | undefined;
+
+  if (isRouteErrorResponse(error)) {
+    message = error.status === 404 ? "404" : "Error";
+    details =
+      error.status === 404
+        ? "The requested page could not be found."
+        : error.statusText || details;
+  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    details = error.message;
+    stack = error.stack;
+  }
+
+  return (
+    <main id="error-page">
+      <h1>{message}</h1>
+      <p>{details}</p>
+      {stack && (
+        <pre>
+          <code>{stack}</code>
+        </pre>
+      )}
+    </main>
+  );
+}
+```
+
+The hard coded data is displayed when the either of the contact links in the sidebar are clicked.
+
+![hardcode contact](images/hardcodeContact.png)
+
+### Link navigation
+
+The links in the sidebar are currently using anchor tags which cause a full page reload when clicked.  To avoid this the anchor tags are replaced with Link components from react-router.  This allows for client side navigation without a full page reload.
+
+** app/root.tsx **
+```javascript
+import {
+  Form,
+  Link,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  isRouteErrorResponse,
+} from "react-router";
+import type { Route } from "./+types/root";
+
+import appStylesHref from "./app.css?url";
+
+export default function App() {
+  return (
+    <>
+      <div id="sidebar">
+        <h1>React Router Contacts</h1>
+        <div>
+          <Form id="search-form" role="search">
+            <input
+              aria-label="Search contacts"
+              id="q"
+              name="q"
+              placeholder="Search"
+              type="search"
+            />
+            <div aria-hidden hidden={true} id="search-spinner" />
+          </Form>
+          <Form method="post">
+            <button type="submit">New</button>
+          </Form>
+        </div>
+        <nav>
+          <ul>
+            <li>
+              <Link to={`/contacts/1`}>Your Name</Link>
+            </li>
+            <li>
+              <Link to={`/contacts/2`}>Your Friend</Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div id="detail">
+        <Outlet />
+      </div>
+    </>
+  );
+}
+
+// The Layout component is a special export for the root route.
+// It acts as your document's "app shell" for all route components, HydrateFallback, and ErrorBoundary
+// For more information, see https://reactrouter.com/explanation/special-files#layout-export
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href={appStylesHref} />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+// The top most error boundary for the app, rendered when your app throws an error
+// For more information, see https://reactrouter.com/start/framework/route-module#errorboundary
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  let message = "Oops!";
+  let details = "An unexpected error occurred.";
+  let stack: string | undefined;
+
+  if (isRouteErrorResponse(error)) {
+    message = error.status === 404 ? "404" : "Error";
+    details =
+      error.status === 404
+        ? "The requested page could not be found."
+        : error.statusText || details;
+  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    details = error.message;
+    stack = error.stack;
+  }
+
+  return (
+    <main id="error-page">
+      <h1>{message}</h1>
+      <p>{details}</p>
+      {stack && (
+        <pre>
+          <code>{stack}</code>
+        </pre>
+      )}
+    </main>
+  );
+}
+```
+
+### Client Loader for sidebar
+
+Rather than displaying two hard coded links the sidebar should read a simulated database and print a list of contact names as links maintaining the contact.id as a parameter for the link.
+
+To access the simulated database the getContacts() function is imported from ./data
+
+The root route can load data from a database (or simulated database) with a ```clientLoader()```  function.  The loading action takes place asynchronously and is passed to the App() as ```loaderData```.  In this example the loaderData os stored in a constant {contacts}.
+
+The loaderData is of type Route.ComponentProps.
+
+The sidebar now displays links by contact name to different contact ids.
+
+![contact list](images/contactList.png)
+
+### Hydrate fallback
+
+We are using browser routing suitable for a single page application.
+
+Server side routing is turned off in react-router.config.ts
+
+** react-router.config.ts **
+```javascript
+import { type Config } from "@react-router/dev/config";
+
+export default {
+  ssr: false,
+} satisfies Config;
+```
+
+While the data is coming from the source the root route can display a hydrateFallback.  This will be briefly displayed until the asynchonous data is ready.
+
+** root.tsx **
+```javascript
+import {
+  Form,
+  Link,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  isRouteErrorResponse,
+} from "react-router";
+import type { Route } from "./+types/root";
+
+import appStylesHref from "./app.css?url";
+
+import { getContacts } from "./data";
+
+export async function clientLoader() {
+  const contacts = await getContacts();
+  return { contacts };
+}
+
+export default function App({ loaderData }: Route.ComponentProps) {
+  const {contacts} = loaderData;
+  return (
+    <>
+      <div id="sidebar">
+        <h1>React Router Contacts</h1>
+        <div>
+          <Form id="search-form" role="search">
+            <input
+              aria-label="Search contacts"
+              id="q"
+              name="q"
+              placeholder="Search"
+              type="search"
+            />
+            <div aria-hidden hidden={true} id="search-spinner" />
+          </Form>
+          <Form method="post">
+            <button type="submit">New</button>
+          </Form>
+        </div>
+        <nav>
+           {contacts.length ? (
+            <ul>
+              {contacts.map((contact) => (
+                <li key={contact.id}>
+                  <Link to={`contacts/${contact.id}`}>
+                    {contact.first || contact.last ? (
+                      <>
+                        {contact.first} {contact.last}
+                      </>
+                    ) : (
+                      <i>No Name</i>
+                    )}
+                    {contact.favorite ? (
+                      <span>★</span>
+                    ) : null}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>
+              <i>No contacts</i>
+            </p>
+          )}
+        </nav>
+      </div>
+      <div id="detail">
+        <Outlet />
+      </div>
+    </>
+  );
+}
+
+// The Layout component is a special export for the root route.
+// It acts as your document's "app shell" for all route components, HydrateFallback, and ErrorBoundary
+// For more information, see https://reactrouter.com/explanation/special-files#layout-export
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href={appStylesHref} />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+// The top most error boundary for the app, rendered when your app throws an error
+// For more information, see https://reactrouter.com/start/framework/route-module#errorboundary
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  let message = "Oops!";
+  let details = "An unexpected error occurred.";
+  let stack: string | undefined;
+
+  if (isRouteErrorResponse(error)) {
+    message = error.status === 404 ? "404" : "Error";
+    details =
+      error.status === 404
+        ? "The requested page could not be found."
+        : error.statusText || details;
+  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    details = error.message;
+    stack = error.stack;
+  }
+
+  return (
+    <main id="error-page">
+      <h1>{message}</h1>
+      <p>{details}</p>
+      {stack && (
+        <pre>
+          <code>{stack}</code>
+        </pre>
+      )}
+    </main>
+  );
+}
+
+export function HydrateFallback() {
+  return (
+    <div id="loading-splash">
+      <div id="loading-splash-spinner" />
+      <p>Loading, please wait...</p>
+    </div>
+  );
+}
+```
+The loading spinner is now displayed before data loads ( the database simulation has a built in delay to allow the spinner time to be observed).
+
+### index route
+
+Before child routes are displayed in an <Outlet> there is a blank.  This can be filled by an index route which becomes the default route displayed in the <Outlet>
+
+Add an index route to routes.ts which defaults to the route module routes/home.tsx.
+
+** app/routes.tsx **
+```Javascript
+import type { RouteConfig } from "@react-router/dev/routes";
+import { index, route } from "@react-router/dev/routes";
+
+export default [
+  index("routes/home.tsx"),   
+  route("contacts/:contactId", "routes/contact.tsx"),
+] satisfies RouteConfig;
+```
+
+Then home.tsx can contain what you choose.
+
+app/routes/home.tsx
+```javascript
+export default function Home() {
+  return (
+    <p id="index-page">
+      This is a demo for React Router.
+      <br />
+      Check out{" "}
+      <a href="https://reactrouter.com">
+        the docs at reactrouter.com
+      </a>
+      .
+    </p>
+  );
+}
+```
+
+The default page is displayed in the <Outlet>
+
+![index home](images/index.png)
+
+## About route
+
+Adding a static page which does not need any database access.
+
+** app/routes.ts **
+```javascript
+import type { RouteConfig } from "@react-router/dev/routes";
+import { index, route } from "@react-router/dev/routes";
+
+export default [
+  index("routes/home.tsx"),   
+  route("contacts/:contactId", "routes/contact.tsx"),
+  route("about", "routes/about.tsx")
+] satisfies RouteConfig;
+```
+
+Then add the route module:
+
+** app/routes/about.tsx
+```javascript
+import { Link } from "react-router";
+
+export default function About() {
+  return (
+    <div id="about">
+      <Link to="/">← Go to demo</Link>
+      <h1>About React Router Contacts</h1>
+
+      <div>
+        <p>
+          This is a demo application showing off some of the
+          powerful features of React Router, including
+          dynamic routing, nested routes, loaders, actions,
+          and more.
+        </p>
+
+        <h2>Features</h2>
+        <p>
+          Explore the demo to see how React Router handles:
+        </p>
+        <ul>
+          <li>
+            Data loading and mutations with loaders and
+            actions
+          </li>
+          <li>
+            Nested routing with parent/child relationships
+          </li>
+          <li>URL-based routing with dynamic segments</li>
+          <li>Pending and optimistic UI</li>
+        </ul>
+
+        <h2>Learn More</h2>
+        <p>
+          Check out the official documentation at{" "}
+          <a href="https://reactrouter.com">
+            reactrouter.com
+          </a>{" "}
+          to learn more about building great web
+          applications with React Router.
+        </p>
+      </div>
+    </div>
+  );
+}
+```
+
+Add a link about into the sidebar.
+
+** app/root.tsx
+```javascript
+import {
+  Form,
+  Link,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  isRouteErrorResponse,
+} from "react-router";
+import type { Route } from "./+types/root";
+
+import appStylesHref from "./app.css?url";
+
+import { getContacts } from "./data";
+
+export async function clientLoader() {
+  const contacts = await getContacts();
+  return { contacts };
+}
+
+export default function App({ loaderData }: Route.ComponentProps) {
+  const {contacts} = loaderData;
+  return (
+    <>
+      <div id="sidebar">
+        <h1>
+          <Link to="about">React Router Contacts</Link>
+        </h1>
+        <div>
+          <Form id="search-form" role="search">
+            <input
+              aria-label="Search contacts"
+              id="q"
+              name="q"
+              placeholder="Search"
+              type="search"
+            />
+            <div aria-hidden hidden={true} id="search-spinner" />
+          </Form>
+          <Form method="post">
+            <button type="submit">New</button>
+          </Form>
+        </div>
+        <nav>
+           {contacts.length ? (
+            <ul>
+              {contacts.map((contact) => (
+                <li key={contact.id}>
+                  <Link to={`contacts/${contact.id}`}>
+                    {contact.first || contact.last ? (
+                      <>
+                        {contact.first} {contact.last}
+                      </>
+                    ) : (
+                      <i>No Name</i>
+                    )}
+                    {contact.favorite ? (
+                      <span>★</span>
+                    ) : null}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>
+              <i>No contacts</i>
+            </p>
+          )}
+        </nav>
+      </div>
+      <div id="detail">
+        <Outlet />
+      </div>
+    </>
+  );
+}
+
+// The Layout component is a special export for the root route.
+// It acts as your document's "app shell" for all route components, HydrateFallback, and ErrorBoundary
+// For more information, see https://reactrouter.com/explanation/special-files#layout-export
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href={appStylesHref} />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+// The top most error boundary for the app, rendered when your app throws an error
+// For more information, see https://reactrouter.com/start/framework/route-module#errorboundary
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  let message = "Oops!";
+  let details = "An unexpected error occurred.";
+  let stack: string | undefined;
+
+  if (isRouteErrorResponse(error)) {
+    message = error.status === 404 ? "404" : "Error";
+    details =
+      error.status === 404
+        ? "The requested page could not be found."
+        : error.statusText || details;
+  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    details = error.message;
+    stack = error.stack;
+  }
+
+  return (
+    <main id="error-page">
+      <h1>{message}</h1>
+      <p>{details}</p>
+      {stack && (
+        <pre>
+          <code>{stack}</code>
+        </pre>
+      )}
+    </main>
+  );
+}
+
+export function HydrateFallback() {
+  return (
+    <div id="loading-splash">
+      <div id="loading-splash-spinner" />
+      <p>Loading, please wait...</p>
+    </div>
+  );
+}
+```
+
+![about with links](images/aboutwithlinks.png)
+
+### Modify layout
+
+To allow routes to display different layouts a layout file can be specified in front of an array of routes.
+
+In this example, home and contacts routes will use a layout which includes a sidebar, but the about route will not.
+
+** app/routes.ts **
+```javascript
+import type { RouteConfig } from "@react-router/dev/routes";
+import { index, layout, route } from "@react-router/dev/routes";
+
+export default [
+  layout("layouts/sidebar.tsx",[
+    index("routes/home.tsx"),   
+    route("contacts/:contactId", "routes/contact.tsx")
+  ]),
+  route("about", "routes/about.tsx")
+] satisfies RouteConfig;
+```
+
+In a new folder, layouts, sidebar.tsx will now contain all the sidebar details and clientLoader from root.tsx.  Note that the relative location of data is now ../data.
+
+
+** app/layouts/sidebar.tsx **
+```javascript
+import { Form, Link, Outlet } from "react-router";
+import { getContacts } from "../data";
+import type { Route } from "./+types/sidebar";
+
+export async function clientLoader() {
+  const contacts = await getContacts();
+  return { contacts };
+}
+
+export default function SidebarLayout({
+  loaderData,
+}: Route.ComponentProps) {
+  const { contacts } = loaderData;
+
+return (
+    <>
+      <div id="sidebar">
+        <h1>
+          <Link to="about">React Router Contacts</Link>
+        </h1>
+        <div>
+          <Form id="search-form" role="search">
+            <input
+              aria-label="Search contacts"
+              id="q"
+              name="q"
+              placeholder="Search"
+              type="search"
+            />
+            <div aria-hidden hidden={true} id="search-spinner" />
+          </Form>
+          <Form method="post">
+            <button type="submit">New</button>
+          </Form>
+        </div>
+        <nav>
+           {contacts.length ? (
+            <ul>
+              {contacts.map((contact) => (
+                <li key={contact.id}>
+                  <Link to={`contacts/${contact.id}`}>
+                    {contact.first || contact.last ? (
+                      <>
+                        {contact.first} {contact.last}
+                      </>
+                    ) : (
+                      <i>No Name</i>
+                    )}
+                    {contact.favorite ? (
+                      <span>★</span>
+                    ) : null}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>
+              <i>No contacts</i>
+            </p>
+          )}
+        </nav>
+      </div>
+            <div id="detail">
+        <Outlet />
+      </div>
+    </>
+  );
+}
+```
+
+Now the contact list is remover from root.tsx, just leaving the outlet.
+
+** app/root.tsx **
+```javascript
+import {
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  isRouteErrorResponse,
+} from "react-router";
+import type { Route } from "./+types/root";
+
+import appStylesHref from "./app.css?url";
+
+export default function App() {
+  return <Outlet />;
+}
+
+// The Layout component is a special export for the root route.
+// It acts as your document's "app shell" for all route components, HydrateFallback, and ErrorBoundary
+// For more information, see https://reactrouter.com/explanation/special-files#layout-export
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href={appStylesHref} />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+// The top most error boundary for the app, rendered when your app throws an error
+// For more information, see https://reactrouter.com/start/framework/route-module#errorboundary
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  let message = "Oops!";
+  let details = "An unexpected error occurred.";
+  let stack: string | undefined;
+
+  if (isRouteErrorResponse(error)) {
+    message = error.status === 404 ? "404" : "Error";
+    details =
+      error.status === 404
+        ? "The requested page could not be found."
+        : error.statusText || details;
+  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    details = error.message;
+    stack = error.stack;
+  }
+
+  return (
+    <main id="error-page">
+      <h1>{message}</h1>
+      <p>{details}</p>
+      {stack && (
+        <pre>
+          <code>{stack}</code>
+        </pre>
+      )}
+    </main>
+  );
+}
+
+export function HydrateFallback() {
+  return (
+    <div id="loading-splash">
+      <div id="loading-splash-spinner" />
+      <p>Loading, please wait...</p>
+    </div>
+  );
+}
+```
+
+Now the home page is served with a sidebar.
+
+![home sidebar](images/homeSidebar.png)
+
+The about page is served withouot a sidebar.
+
+![about nosidebar](images/aboutNosidebar.png)
+
+## Pre-Render
+
+The spinner shows before the about page displays.  To stop this static pages can be prerendered on build by setting a flag in the react-router config file.
+
+**app/react-router.config.ts **
+```javascript
+import { type Config } from "@react-router/dev/config";
+
+export default {
+  ssr: false,
+  prerender: ["/about"],
+} satisfies Config;
+```
+
+### Server or Client loading
+
+By changing ssr: to true in app/react-router.config.ts and then using loader() in place of clientLoader in sidebar.tsx the data can be loaded and server side rendered.
+
+The [online tutorial follows this change](https://reactrouter.com/tutorials/address-book#server-side-rendering), but here I am sticking with client side loading so that a single page app can be made.
+
+### URL params for loaders
+
+When a contact name is selected the url called has a parameter made up of the first and second names separated by a hyphen.
+
+For examle "http://localhost:5173/contacts/alex-anderson"
+
+The route was to "contacts/:contactId" so the name alex-anderson will be passed as params.contactid.
+
+** app/routes/contact.tsx **
+```javascript
+import { Form } from "react-router";
+
+import { getContact, type ContactRecord } from "../data";
+import type { Route } from "./+types/contact";
+
+export async function clientLoader({ params }: Route.LoaderArgs) {
+  const contact = await getContact(params.contactId);
+    if (!contact) {
+    throw new Response("Not Found", { status: 404 });
+  }
+  return { contact };
+}
+
+export default function Contact({
+  loaderData,
+}: Route.ComponentProps) {
+  const { contact } = loaderData;
+
+  return (
+    <div id="contact">
+      <div>
+        <img
+          alt={`${contact.first} ${contact.last} avatar`}
+          key={contact.avatar}
+          src={contact.avatar}
+        />
+      </div>
+
+      <div>
+        <h1>
+          {contact.first || contact.last ? (
+            <>
+              {contact.first} {contact.last}
+            </>
+          ) : (
+            <i>No Name</i>
+          )}
+          <Favorite contact={contact} />
+        </h1>
+
+        {contact.twitter ? (
+          <p>
+            <a
+              href={`https://twitter.com/${contact.twitter}`}
+            >
+              {contact.twitter}
+            </a>
+          </p>
+        ) : null}
+
+        {contact.notes ? <p>{contact.notes}</p> : null}
+
+        <div>
+          <Form action="edit">
+            <button type="submit">Edit</button>
+          </Form>
+
+          <Form
+            action="destroy"
+            method="post"
+            onSubmit={(event) => {
+              const response = confirm(
+                "Please confirm you want to delete this record.",
+              );
+              if (!response) {
+                event.preventDefault();
+              }
+            }}
+          >
+            <button type="submit">Delete</button>
+          </Form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Favorite({
+  contact,
+}: {
+  contact: Pick<ContactRecord, "favorite"> | Partial<Pick<ContactRecord, "favorite">>;
+}) {
+  const favorite = contact.favorite;
+
+  return (
+    <Form method="post">
+      <button
+        aria-label={
+          favorite
+            ? "Remove from favorites"
+            : "Add to favorites"
+        }
+        name="favorite"
+        value={favorite ? "false" : "true"}
+      >
+        {favorite ? "★" : "☆"}
+      </button>
+    </Form>
+  );
+}
+```
 

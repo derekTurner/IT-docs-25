@@ -4,10 +4,10 @@
 * [Address Book Tutorial](25_Block_REACTROUTER/section_1/rmtutorial.md)
 <!-- week 9 -->
 * [Mongo Database](25_Block_REACTROUTER/section_2/library.md)
-<!-- week 10 
-* [Setup remix project](Block_REMIX/section_3/readDatabase.md)
-* [Read Database](Block_REMIX/section_4/moreDatabase.md)
--->
+<!-- week 10 -->
+* [Setup remix project](25_Block_REACTROUTER/section_3/readDatabase.md)
+* [Read Database](25_Block_REACTROUTER/section_4/moreDatabase.md)
+
 <!-- week 11 
 * [Item Details](Block_REMIX/section_5/details.md)
 * [Item Create](Block_REMIX/section_6/create.md)

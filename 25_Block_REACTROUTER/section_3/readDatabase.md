@@ -1,5 +1,7 @@
 # Setup to read Database
 
+Treat this section with caution this code is based on remix and needs to be converted to use react router.
+
 In this section the remix framework will be set up to read details from the local_library database which was seeded in the previous section.
 
 Make sure that docker and the database are running in the background.
