@@ -1435,7 +1435,7 @@ return (
 }
 ```
 
-Now the contact list is remover from root.tsx, just leaving the outlet.
+Now the contact list is removed from root.tsx, just leaving the outlet.
 
 ** app/root.tsx **
 ```javascript
@@ -1550,6 +1550,12 @@ For examle "http://localhost:5173/contacts/alex-anderson"
 
 The route was to "contacts/:contactId" so the name alex-anderson will be passed as params.contactid.
 
+Note that the loader ( in this case clientLoader ) is called in the route module here and not in the route component.
+
+Within the loader a response is thrown if the contact is not found and that will display a 404 error page.
+
+The export default function Contact() renders the contact page after the loader has finished loading.
+
 ** app/routes/contact.tsx **
 ```javascript
 import { Form } from "react-router";
@@ -1654,3 +1660,8 @@ function Favorite({
 }
 ```
 
+Selecting a name from the contact list now opens the individuals detail page in the outlet frame.
+
+![alex anderson](/images/alex.png)
+
+The online tutorial continues with the next section, but this a sufficient stage to look to reading from the mongodb database.

@@ -66,9 +66,8 @@ When the react tutorial was installed to a local docker container the process wa
 
 # Setting up a container
 
-The docker container for this exercise will be named "RemixLibrary24".  This will include an application to seed the database and another to perforCRUD functions on it.
 
-Let's use github desktop to create a new repository on github called "RemixLibrary24".  This will be the location for the code for the application.
+Let's use github desktop to create a new repository on github called "Library25".  This will be the location for the code for the application.
 
 ![new repository](images/repository.png)
 
@@ -88,7 +87,7 @@ Add a configuration file for node and typescript.
 
 ![nodetype](images/nodetype.png)
 
-Choosse the node.js version to use as 22 bookworm.
+Choose the node.js version to use as 22 bookworm.
 
 ![bookworm](images/bookworm.png)
 
@@ -160,13 +159,16 @@ The details from the atlas database will be added later.
 ```code
 DB_STRING=mongodb+srv://<details from atlas>/local_library
 DB_STRING=mongodb://host.docker.internal:27017/local_library
+DB_STRING=mongodb://localhost:27017/local_library
 ```
 Now create a file called ".env" in the seed folder.  This will be used to store the environment variables for the database.  This file will be added to the .gitignore file.
 
 ```code
 DB_STRING=mongodb://host.docker.internal:27017/local_library
 ```
-This file should only contain one database connection string at a time.  The connection used here is for a local database.  Note that the "host.docker.internal" is used in the string rather than "127.0.0.1" in order to gain access to the host.  The connection string for the database in the cloud will be added later.
+This file should only contain one database connection string at a time.  The connection used here is is appropriate when the seed application is running in a docker container.  Note that the "host.docker.internal" is used in the string rather than "127.0.0.1" in order to gain access to the host.  
+
+If an Atlas cloud database is used the connection string should be the unique connection string provided by Atlas.  By changing the connection string it is possible to connect to a different database.
 
 Now add a config folder and in this a file called db.js.  This will be used to store the database connection string.
 
@@ -193,33 +195,26 @@ export default db;
 
 This uses dotenv to read the connection string from the .env file.  The connection string is then used to connect to the database.  The connection string is printed to the console for debugging purposes.
 
-The fuction db() is asynchronous and returns a promise.  The promise is resolved when the connection is made.  The promise is rejected if there is an error.  The promise is returned by the function.  However the use of [await](https://www.w3schools.com/js/js_async.asp) means that the function waits fro the promise to be resolved before continuing.
+The fuction db() is asynchronous and returns a promise.  The promise is resolved when the connection is made.  The promise is rejected if there is an error.  The promise is returned by the function.  However the use of [await](https://www.w3schools.com/js/js_async.asp) means that the function waits for the promise to be resolved before continuing.
 
-This module is exprted as the default export.  This means that the function can be imported into other modules using the following syntax.
+This module is exported as the default export.  This means that the function can be imported into other modules using the following syntax.
 
 ```javascript
 import db from './config/db.js';
 ```
 
-## seeding the database
+## code to seed the database
 
-Now add a file called app.js.  This will be used to seed the database.
+Now add a file called index.js.  This will be used to seed the database.
 
 
 The seed/index.js code defines MongoDB schemas and models to represent authors, books, book instances, and genres in a library application. It also includes code to seed sample data into a MongoDB database for this library app.
 
-
-
-Dotenv is needed to read the .env contents via the process.
-
-**config.db.js**
-
-
-
+Dotenv is needed to read the .env contents via the process.env.DB_STRING set up in the config/db.js file.
 
 For a local database running in docker it is important that port 27017 is available externally.
 
-To access an application running on the local host from within a docker environment the **host.docker.internal** should be addressed rather than 127.0.0.1.
+To access an application running on the local host from within a docker environment the **host.docker.internal** should be addressed.
 
 So a connection string for a local instance of mongodb with database named "local_library" and accessed from an application running on docker will be:
 
@@ -267,7 +262,7 @@ var AuthorSchema = new Schema(
       title: {type: String, required: true},
       summary: {type: String, required: true},
       isbn: {type: String, required: true},
-      author: {type: Schema.Types.ObjectId, ref: 'Author', required: true},
+      author: [{type: Schema.Types.ObjectId, ref: 'Author', required: true}],
       genre: [{type: Schema.Types.ObjectId, ref: 'Genre'}]
     }
   );
@@ -456,10 +451,8 @@ await bookCreate(
   "Summary of test book 1", 
   "ISBN111111", 
   [authors[4],authors[3]], 
-  [
-    genres[0],
-    genres[1]
-  ]);
+  [genres[0],genres[1]]
+);
 
   await bookCreate(
   books,
@@ -467,10 +460,7 @@ await bookCreate(
   "Summary of test book 2",
   "ISBN222222",
   [authors[4]],
-  [
-    genres[0],
-    genres[1]
-  ]
+  [genres[0],genres[1]]
 );
 
 await bookInstanceCreate(books[0], "London Gollancz, 2014.", "Available",false );
@@ -739,69 +729,38 @@ Book Instance created: new ObjectId('673329d8d3bfde41981fe54d')
 ```
 > CTRL + C
 
-Close the mongodb container ready to try a different approach.
+### Observing the database in VSC code
 
-> docker stop mongodb
-
-Close powershell.
-
-## Working with mongodb in a VSC development container
-
-If you wish you can run a development container opening with node and mongo.
-
-This works fine and allows you to peek in to the database to inspect.
+The database is now populated with books and book instances. You can see the collections and documents in the mongo database using the mongoDB for VS Code extension.
 
 Open a new window of visual studio code and install the mongoDB for VS Code extension.
 
-[mongoforVSC](images/mongoforVSC.png)
+![mongo for VSC code](images/mongoExtension.png)
 
-Now proceed as normal to create a development container starting by opening a folder in a container.  This time I won't bother to make a github repository as this local container is easily recreated on another machine.
+When you open the extension you will be asked to enter the connection string for the database you want to connect to.
 
-![open](images/open.png)
+Note that VSC is not now running in a docker container to the connection to mongodb://host.docker.internal:27017/local_library is not appropriate.
 
-Locate the configuration files in the workspace.
+Instead of this use the connection string which uses the local port 27017.
 
-![workplace](images/workplace.png)
+![local connection string](images/localConnection.png)
 
-Select a node and mongo container.
+Clicking on the database local_library icon will enable the content of the seeded database to be checked.
 
-![nodemongo](images/nodemongo.png)
-
-Dont select and extra or optional items and proceed to let the container files download.
-
-Wait for the container to open in docker desktop.
-
-From the mongo extension menu select connect to a database.
-
-![connect](images/connect.png)
-
-On first connection you will need see the default databases.
-
-![firstconnect](images/firstconnect.png)
-
-Now return to the seed folder in a separate VSC window and run the application.
-
-> npm run start
-
-The connection string now accesses the local mongodb container running under visual studio code.
-
-After seeding the database you can inspect the database in the mongo extension.
-
-![libraryvieww](images/libraryview.png)
-
-You can look at the collections and documents to see details of the data.
-
-![documents](images/documents.png)
-
-The details of the selected document can be viewed in the editor.
-
-![viewinedit](images/viewinedit.png)
+![inspect books](images/inspectBooks.png)
 
 Note the selectod item has and _id field which is a unique identifier.
 
 Where references are made to other documents the _id field is used.
 
 Take some time to look at the data in the database and familiarise yourself with the structure of the data.
+
+Close the mongodb container when you are done.
+
+> docker stop mongodb
+
+Close powershell.
+
 
 ## Working with a mongodb in and Atlas online cluster
 
@@ -813,7 +772,9 @@ You will need to ensure that the IP adress from which you access the atlas clust
 
 If you have a dynamic local IP you can set the white list to "my current IP".
 
+### Re-seeding
 
+The file in Library25 can be run at any time to re-seed the database.  This will delete all the data and re-seed it with the data from the Library25 file.
 
 
 
