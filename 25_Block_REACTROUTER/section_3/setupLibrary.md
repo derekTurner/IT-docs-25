@@ -1,5 +1,48 @@
 # Setup to read Database
 
+In this section the localLibrary25 repository will be set up to read from the mongo database running under control of powershell.
+
+The repository will be based as a starter on the react router tutorial files at the point where the contacts were able to be selected and content of the simulated database is displayed.
+
+## Make a fresh repository for the library project
+
+Create a new repository named localLibrary25.
+
+![localLibrary25](./images/localLibrary25.png)
+
+Copy the contents (but not any node modules) of the react router tutorial files (in AddressBook25) to the new repository.
+
+In VS Code open the new folder localLibrary25 in a container.
+
+Install node version manager.
+
+> curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+
+Check that the latest version of long term supported node is installed.
+
+> nvm install --lts
+
+```bash
+Now using node v24.11.1 (npm v11.6.2)
+```
+
+Now install the existing dependencies.  First in the root folder of the project.
+
+> npm install
+
+Then in the contacts folder.
+
+> npm install
+
+Check that the app runs correctly.
+
+> npm run dev
+
+You may need to wait while vite updates dependencies before the app runs.
+
+## Set up to read from the mongo database
+-----------------------
+
 Treat this section with caution this code is based on remix and needs to be converted to use react router.
 
 In this section the remix framework will be set up to read details from the local_library database which was seeded in the previous section.
