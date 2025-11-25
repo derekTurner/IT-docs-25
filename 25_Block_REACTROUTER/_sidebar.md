@@ -5,7 +5,7 @@
 <!-- week 9 -->
 * [Mongo Database](25_Block_REACTROUTER/section_2/library.md)
 <!-- week 10 -->
-* [Setup remix project](25_Block_REACTROUTER/section_3/setupLibrary.md)
+* [Setup react router project](25_Block_REACTROUTER/section_3/setupLibrary.md)
 * [Read Database](25_Block_REACTROUTER/section_4/readDatabase.md)
 
 <!-- week 11 

@@ -1,4 +1,4 @@
-# Full stack application using the remix framework
+# Full stack application using the react router framework
 
 The best introduction to react router is the [Adress Book tutorial](https://reactrouter.com/tutorials/address-book#setup) on the framework's website.
 

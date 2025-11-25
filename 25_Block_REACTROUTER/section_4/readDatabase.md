@@ -10,16 +10,35 @@ To run the database open powershell and start the database with:
 
 Check that the container starts in docker desktop.
 
-## Before Starting
-
-**The instructions to get started with remix are [online](https://remix.run/docs/en/main/start/quickstart), but if you run these directly they will not install all the latest versions, so read through the process without following these steps, and then we will take a shortcut.**
-
 ## Implementing models
 
-In the models folder the files must be populated with the schema for the database.
+In the models folder the empty files must be populated with the schema for the database.
 This will include author. book, bookinstance and genre.
 
 For each of these files the imports from mongoose must be added.  There is also a date formatting type which  is using the [luxon](https://www.npmjs.com/package/luxon) package.
+
+From the project folder (library) install luxon with:
+
+> npm install luxon
+
+```bash
+added 1 package, and audited 287 packages in 2s
+
+46 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+```
+> npm i --save-dev @types/luxon
+
+```bash
+added 1 package, and audited 288 packages in 918ms
+
+46 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+```
 
 Each model file will export an interface which will include not only the schema but also the virtuals.  These are formatted items which are created from the schema.  For example a name could be fornmed from the family _name and the first_name.
 
@@ -163,8 +182,8 @@ And also:
 **book.ts**
 ```javascript
 import {Schema, model} from 'mongoose';
-import { IAuthor } from './author';
-import { IGenre } from './genre';
+import { type IAuthor } from './author';
+import { type IGenre } from './genre';
 
 
 export interface IBook extends Document{
@@ -261,70 +280,45 @@ export default BookInstance;
 
 In the roots folder files need to be created with names which match the routes which were created as links in the app.tsx file.  These files will be used to define the routes for the application.
 
-The first file to be created is the **_index.tsx** file.  This file will be used to define the route when the application is called without a specific route. Note the filename has a leading underscore.  This is a convention used by React to indicate that the file is a private file.
+The first file to be created is the **home.tsx** file.  This file will be used to define the route when the application is called without a specific route. Note the filename has a leading underscore.  
+
+There is already a home.tsx file in the routes folder.  This can be modified to reflect the library applicaion.
+
+
 
 ### Index route
 
-**routes/_index.tsx**
+**routes/home.tsx**
 ```javascript
-export default function Index() {
-    return (
-      <p id="index-page">
-         <center><h1>Local Library</h1></center>
-      
-        <p>This is a demonstation for Remix running on Vite.</p>
-        <br />
-        Check out{" "}
-        <a href="https://remix.run">the docs at remix.run</a>.
-      </p>
-    );
-  }
+import { type MetaFunction } from "react-router";
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      name: "description",
+      content: "Home page - Browse your local library",
+    },
+  ];
+};
+
+export default function Home() {
+  return (
+    <p id="index-page">
+      This is a demo local library prohect for React Router.
+      <br />
+      Check out{" "}
+      <a href="https://reactrouter.com">
+        the docs at reactrouter.com
+      </a>
+      .
+    </p>
+  );
+}
+
 ```  
-Note that the file is a function which returns a JSX element.  This is the standard way to define a React component.  The component is a simple paragraph with a heading and a link to the Remix documentation.  This will be rendered in the ```<Outlet />``` element in the app.tsx file.
+Note that the file is a function which returns a JSX element.  This is the standard way to define a React component.  The component is a simple paragraph with a heading and a link to the react router documentation.  This will be rendered in the ```<Outlet />``` element bypassing the layout sidebar defined in root.tsx.
 
-## Run the application
 
-Change directory into the library 24 folder and run dev.
-
-> cd library24
-> npm run dev
-
-There will be some warnings which can be ignored these are pointing towards the next version of react router which we are not using at the moment.
-
-```bash
-
- warn  Fetcher persistence behavior is changing in React Router v7
-┃ You can use the `v3_fetcherPersist` future flag to opt-in early.
-┃ -> https://remix.run/docs/en/2.13.1/start/future-flags#v3_fetcherPersist
-┗
- warn  Route discovery/manifest behavior is changing in React Router v7
-┃ You can use the `v3_lazyRouteDiscovery` future flag to opt-in early.
-┃ -> https://remix.run/docs/en/2.13.1/start/future-flags#v3_lazyRouteDiscovery
-┗
- warn  Relative routing behavior for splat routes is changing in React Router v7
-┃ You can use the `v3_relativeSplatPath` future flag to opt-in early.
-┃ -> https://remix.run/docs/en/2.13.1/start/future-flags#v3_relativeSplatPath
-┗
- warn  Data fetching is changing to a single fetch in React Router v7
-┃ You can use the `v3_singleFetch` future flag to opt-in early.
-┃ -> https://remix.run/docs/en/2.13.1/start/future-flags#v3_singleFetch
-┗
- warn  The format of errors thrown on aborted requests is changing in React Router v7
-┃ You can use the `v3_throwAbortReason` future flag to opt-in early.
-┃ -> https://remix.run/docs/en/2.13.1/start/future-flags#v3_throwAbortReason
-┗
-```
-The application should now be running on http://localhost:5173
-
-```bash
-Re-optimizing dependencies because lockfile has changed
-  ➜  Local:   http://localhost:5173/
-  ➜  Network: http://172.17.0.3:5173/
-  ➜  press h + enter to show help
-mongodb://host.docker.internal:27017/local_library
-Connected to Mongodb Database
-```
-![home page](images/home.png)
 
 ## Create the routes
 
@@ -334,97 +328,144 @@ Populate the following route files with the following code.
 
 ### Catalog route
 
-**routes/catalog._index.tsx**
+**routes/catalog.tsx**
 ```javascript
-//import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";//
-//import type { FunctionComponent } from "react";
+import { type MetaFunction } from "react-router";
+import type { Route } from "./+types/catalog";
 
+import { loadCatalogDetails, type CatalogDetails } from "./catalog.server";
 
-
-interface Details {
-  numBooks: number,
-  numBookInstances: number,
-  numAvailableBookInstances: number,
-  numAuthors: number,
-  numGenres: number
-}
-
-
-import Card from 'react-bootstrap/Card';
-
-import { json } from "@remix-run/node";
-
-import { useLoaderData, } from "@remix-run/react";
-
-
-import Book from '../models/book';
-import Author from '../models/author';
-import BookInstance from '../models/bookinstance';
-import Genre from '../models/genre';
-
-
-
-export const loader: unknown = async () => {
-
-
-
-  const [
-    numBooks,
-    numBookInstances,
-    numAvailableBookInstances,
-    numAuthors,
-    numGenres
-  ] = await Promise.all([
-    Book.countDocuments({}).exec(),
-    BookInstance.countDocuments({}).exec(),
-    BookInstance.countDocuments({ status: "Available" }).exec(),
-    Author.countDocuments({}).exec(),
-    Genre.countDocuments({}).exec(),
-  ]);
-
-  if (!numBooks) {
-    throw new Response("Not Found", { status: 404 });
-  }
-
-  const details: Details = {
-    numBooks,
-    numBookInstances,
-    numAvailableBookInstances,
-    numAuthors,
-    numGenres
-  };
-
-  return json({ details });
+export const meta: MetaFunction = () => {
+  return [
+    {
+      name: "description",
+      content: "Library catalog overview with book and author statistics",
+    },
+  ];
 };
 
+export async function loader(): Promise<{ details: CatalogDetails }> {
+  try {
+    const details = await loadCatalogDetails();
+    return { details };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Catalog loader error:", errorMessage, error);
+    throw new Response(`Failed to load catalog data: ${errorMessage}`, {
+      status: 500,
+    });
+  }
+}
 
-export default function Catalog() {
-  console.log(useLoaderData<Details>());
-  const detailJson = useLoaderData<{details:Details}>();
-  const details: Details = detailJson.details;
+export default function Catalog({ loaderData }: Route.ComponentProps) {
+  const { details } = loaderData;
+
   return (
     <div>
-      <center><h1>Book Lists</h1></center>
+      <div className="text-center">
+        <h1>Book Lists</h1>
+      </div>
       <p>The library has the following books:</p>
-      <Card>
-        <Card.Body>
-          <Card.Text>
-            Books: {details.numBooks} ,
-            Instances: {details.numBookInstances} ,
-            Available: {details.numAvailableBookInstances},
-            Authors: {details.numAuthors},
-            Genres: {details.numGenres}
-          </Card.Text>
-        </Card.Body>
-      </Card>
-
+      <div className="card">
+        <div className="card-body">
+          <p className="card-text">
+            Books: {details.numBooks}, Instances: {details.numBookInstances},
+            Available: {details.numAvailableBookInstances}, Authors:{" "}
+            {details.numAuthors}, Genres: {details.numGenres}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
-```
-The route file includes the loader function which is used to fetch the data from the database using appropriate mongoose commands.  In this case the query [contDocuments](https://mongoosejs.com/docs/api/query.html#Query.prototype.countDocuments()) is used to count items in the documents.  A filter {status:"Available"} is used to limit the counts to to show the book count available for loan. A default function is returned by the router.  In this case this is named "Catalog()". When this function is called the loader function is executed and the data is returned to the function.  The data is then displayed in the function. In this case with a card component from bootstrap.
 
-The next route is for the author:
+```
+This refers to a function to load the catalog details from the database.  Mongodb is not compatible with the clientLoader, so the server side loader is used.
+
+To enable server side loading the vite config needs to be updated to include the server side code.
+
+**vite.config.ts**
+```javascript
+import { reactRouter } from "@react-router/dev/vite";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [reactRouter()],
+  build: {
+    sourcemap: false,
+  },
+});
+```
+SSR is set to true in react-router.config.ts
+
+**react-router.config.ts**
+```javascript
+import { type Config } from "@react-router/dev/config";
+
+export default {
+  ssr: true,
+  prerender: ["/about"],
+} satisfies Config;
+
+```
+
+The server side code is in the file catalog.server.ts
+
+**catalog.server.ts**
+```javascript
+import { connectDB } from "../db";
+import Book from "../models/book";
+import Author from "../models/author";
+import BookInstance from "../models/bookinstance";
+import Genre from "../models/genre";
+
+export interface CatalogDetails {
+  numBooks: number;
+  numBookInstances: number;
+  numAvailableBookInstances: number;
+  numAuthors: number;
+  numGenres: number;
+}
+
+export async function loadCatalogDetails(): Promise<CatalogDetails> {
+  try {
+    console.log("Connecting to database...");
+    await connectDB();
+    console.log("Database connected, querying collections...");
+
+    const [
+      numBooks,
+      numBookInstances,
+      numAvailableBookInstances,
+      numAuthors,
+      numGenres,
+    ] = await Promise.all([
+      Book.countDocuments({}).exec(),
+      BookInstance.countDocuments({}).exec(),
+      BookInstance.countDocuments({ status: "Available" }).exec(),
+      Author.countDocuments({}).exec(),
+      Genre.countDocuments({}).exec(),
+    ]);
+
+    console.log("Catalog data loaded successfully");
+
+    return {
+      numBooks,
+      numBookInstances,
+      numAvailableBookInstances,
+      numAuthors,
+      numGenres,
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("loadCatalogDetails error:", errorMessage, error);
+    throw new Error(`Database query failed: ${errorMessage}`);
+  }
+}
+
+```
+
+The next route is for the author: ```this code will need to be split in the same way as the book route.```
 
 ### Author route
 
@@ -545,7 +586,7 @@ export default function Catalog() {
 }
 ```
 
-The pattern of loader function and action function is used for all routes.  This is a good pattern to use as it allows the data retrieval and display to be combined in a single module file.  Some other frameworks use a separate module for the data retrieval and a separate module for the display.
+The pattern of loader function and server side rendering is used for all routes.  This is a good pattern to use as it allows the data retrieval and display to be combined in a single module file.  Some other frameworks use a separate module for the data retrieval and a separate module for the display.
 
 and also:
 
@@ -680,22 +721,8 @@ export default function Catalog() {
 }
 ```
 
-Then in root.tsx uncomment the retrieve array.
 
-**root.tsx (extract)**
-```javascript
-  const retrieve = [
-    ['/', 'home'],
-    ['/catalog/', 'Catalog'],
-    ['/catalog/books/', 'All books'],
-    ['/catalog/authors/', 'All authors'],
-    ['/catalog/genres/', 'All genres'],
-    ['/catalog/instances/', 'All book-instances']
 
-  ]
-```
-
-Note again the naming convention of the route file.  The route file name is not the same as the url!
 
 Restart the vite server and test the application at this stage.
 
