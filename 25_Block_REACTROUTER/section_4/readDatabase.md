@@ -322,7 +322,26 @@ Note that the file is a function which returns a JSX element.  This is the stand
 
 ## Create the routes
 
-Now the home page is running the application needs to be updated to include the routes for the application and the commented out array elements can be brought back. 
+Now the home page is running the application needs to be updated to include the routes for the application.
+
+In the first instance the routes for catalog details is set up.
+** app.routes.ts **
+```javascript
+import type { RouteConfig } from "@react-router/dev/routes";
+import {
+  index,
+  layout,
+  route,
+} from "@react-router/dev/routes";
+
+export default [
+  layout("layouts/sidebar.tsx", [
+    index("routes/home.tsx"),
+    route("catalog", "routes/catalog.tsx"),
+  ]),
+  route("about", "routes/about.tsx"),
+] satisfies RouteConfig;
+```
 
 Populate the following route files with the following code.
 
