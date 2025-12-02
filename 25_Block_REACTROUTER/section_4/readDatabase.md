@@ -324,6 +324,47 @@ Note that the file is a function which returns a JSX element.  This is the stand
 
 Now the home page is running the application needs to be updated to include the routes for the application and the commented out array elements can be brought back. 
 
+The routes are defined in the routes.ts file,
+
+**routes.ts**
+```javascript
+import type { RouteConfig } from "@react-router/dev/routes";
+import {
+  index,
+  layout,
+  route,
+} from "@react-router/dev/routes";
+
+export default [
+  layout("layouts/sidebar.tsx", [
+    index("routes/home.tsx"),
+    route("catalog", "routes/catalog.tsx"),
+    route("authors", "routes/authors.tsx"),
+    route("genres", "routes/genres.tsx"),
+    route("books", "routes/books.tsx"),
+    route("instances", "routes/bookinstances.tsx"),
+  ]),
+  route("about", "routes/about.tsx"),
+] satisfies RouteConfig;
+
+```
+The SidebarLayout function in the sidebar.tsx file is used to render the sidebar and the outlet for the routes.
+
+**sidebar.tsx (extract)**
+```javascript
+export default function SidebarLayout() {
+  const navItems: NavItem[] = [
+    { path: "/", label: "Home" },
+    { path: "/catalog", label: "Catalog" },
+    { path: "/authors", label: "Authors" },
+    { path: "/genres", label: "Genres" },
+    { path: "/books", label: "Books" },
+    { path: "/instances", label: "Book Instances" },
+    { path: "/about", label: "About" },
+  ];
+```
+
+
 Populate the following route files with the following code.
 
 ### Catalog route
@@ -1058,6 +1099,7 @@ export default function BookInstances({
     </div>
   );
 }
+
 
 ```
 
