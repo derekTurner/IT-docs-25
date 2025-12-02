@@ -469,64 +469,145 @@ The next route is for the author: ```this code will need to be split in the same
 
 ### Author route
 
-**routes/catalog.authors.tsx**
+The authors.server.ts file communicates with the database and returns the data for the author route.
+
+The getters and virtuals are set to true so that the virtuals are included in the response.
+
+**routes/catalog.authors.server.ts**
 ```javascript
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
+import { connectDB } from "../db";
+import Author from "../models/author";
 
-import { json } from "@remix-run/node";
+export interface AuthorData {
+  _id: string;
+  first_name: string;
+  family_name: string;
+  date_of_birth: string | null;
+  date_of_death: string | null;
+  name: string;
+  date_of_birth_formatted: string;
+  date_of_death_formatted: string;
+  lifespan: string;
+  url: string;
+}
 
-import { useLoaderData, Link } from "@remix-run/react";
+export async function loadAuthors(): Promise<AuthorData[]> {
+  try {
+    console.log("Connecting to database...");
+    await connectDB();
+    console.log("Database connected, querying authors...");
 
-import Author, { IAuthor } from '../models/author';
+    const authors = await Author.find({}).exec();
 
+    console.log(`Loaded ${authors.length} authors`);
 
-export const loader: unknown = async () => {
-
-  const authors = await Author.find({}, null, { virtuals: true })
-    .sort([['family_name', 'ascending']])
-    .exec();
-
-  if (!authors) {
-    throw new Response("Not Found", { status: 404 });
+    // Convert to plain objects with virtuals and serialized dates
+    return authors.map((author: any) => {
+      // Convert to object with getters to include virtuals
+      const authorObj = author.toObject({ getters: true, virtuals: true });
+      
+      return {
+        _id: authorObj._id.toString(),
+        first_name: authorObj.first_name,
+        family_name: authorObj.family_name,
+        date_of_birth: author.date_of_birth
+          ? new Date(author.date_of_birth).toISOString()
+          : null,
+        date_of_death: author.date_of_death
+          ? new Date(author.date_of_death).toISOString()
+          : null,
+        name: authorObj.name || `${author.family_name}, ${author.first_name}`,
+        date_of_birth_formatted: authorObj.date_of_birth_formatted || "",
+        date_of_death_formatted: authorObj.date_of_death_formatted || "",
+        lifespan: authorObj.lifespan || "unknown",
+        url: authorObj.url || `/catalog/authors/${authorObj._id}`,
+      };
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("loadAuthors error:", errorMessage, error);
+    throw new Error(`Failed to load authors: ${errorMessage}`);
   }
+}
 
-  return json({ authors });
+```
+The loaded data is displayed by authors.tsx
+
+**routes/authors.tsx**
+```javascript
+import { type MetaFunction, Link } from "react-router";
+import type { Route } from "./+types/authors";
+
+import { loadAuthors, type AuthorData } from "./authors.server";
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      name: "description",
+      content: "Browse all authors in the library catalog",
+    },
+  ];
 };
 
+export async function loader(): Promise<{ authors: AuthorData[] }> {
+  try {
+    const authors = await loadAuthors();
+    return { authors };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Authors loader error:", errorMessage, error);
+    throw new Response(`Failed to load authors: ${errorMessage}`, {
+      status: 500,
+    });
+  }
+}
 
-export default function Catalog() {
-  const data = useLoaderData() as { authors: IAuthor[] };
-  //console.log(data);
+export default function Authors({ loaderData }: Route.ComponentProps) {
+  const { authors } = loaderData as { authors: AuthorData[] };
+
   return (
     <div>
-      <center><h1>Author List</h1></center>
+      <div className="text-center">
+        <h1>Author List</h1>
+      </div>
 
-      <Card style={{ width: '60em' }}>
-        <Card.Body>
-          <Card.Text>
-            <ListGroup>
-              {data.authors.map((author) => (
-                <ListGroup.Item className="card-text" key={author._id}>
-                  First Name: {author.first_name} <br />
-                  Name: {author.name} <br />
-                  Date of Birth: {author.date_of_birth_formatted}<br />
-                  Lifespan: {author.lifespan}<br />
-                  <Link to={author.url}>Details</Link>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Card.Text>
-        </Card.Body>
-      </Card>
-
+      <div className="card" style={{ maxWidth: "60em", margin: "0 auto" }}>
+        <div className="card-body">
+          <ul className="list-group list-group-flush">
+            {authors.length > 0 ? (
+              authors.map((author: AuthorData) => (
+                <li
+                  className="list-group-item"
+                  key={author._id}
+                  style={{ padding: "1rem" }}
+                >
+                  <div>
+                    <strong>{author.name}</strong>
+                  </div>
+                  <div className="text-muted small">
+                    <div>Born: {author.date_of_birth_formatted}</div>
+                    <div>Died: {author.date_of_death_formatted}</div>
+                    <div>{author.lifespan}</div>
+                  </div>
+                  <Link
+                    to={author.url}
+                    className="btn btn-sm btn-primary mt-2"
+                  >
+                    View Details
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <div className="alert alert-info">No authors found</div>
+            )}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
 ```
-
-The loader function is used to fetch the data from the database using appropriate mongoose commands.  In this case the query [find](https://mongoosejs.com/docs/api/query.html#Query.prototype.find()) is used to find the documents.  A sort is used to sort the documents.  A default function is returned by the router.  In this case, again, this is named "Catalog()". When the Catalog() function is called the loader function is executed and the data is returned to the function.  The data is then displayed in the function. In this case with a card component from bootstrap.
-
+The loader function in authors.tsx calls the loadAuthors() fuction of authors.server.ts. This is used to fetch the data from the database and return it as an array of AuthorData objects. The AuthorData objects are then used to display the data in the authors.tsx component.
 
 and also:
 
