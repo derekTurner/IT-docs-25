@@ -324,6 +324,47 @@ Note that the file is a function which returns a JSX element.  This is the stand
 
 Now the home page is running the application needs to be updated to include the routes for the application and the commented out array elements can be brought back. 
 
+The routes are defined in the routes.ts file,
+
+**routes.ts**
+```javascript
+import type { RouteConfig } from "@react-router/dev/routes";
+import {
+  index,
+  layout,
+  route,
+} from "@react-router/dev/routes";
+
+export default [
+  layout("layouts/sidebar.tsx", [
+    index("routes/home.tsx"),
+    route("catalog", "routes/catalog.tsx"),
+    route("authors", "routes/authors.tsx"),
+    route("genres", "routes/genres.tsx"),
+    route("books", "routes/books.tsx"),
+    route("instances", "routes/bookinstances.tsx"),
+  ]),
+  route("about", "routes/about.tsx"),
+] satisfies RouteConfig;
+
+```
+The SidebarLayout function in the sidebar.tsx file is used to render the sidebar and the outlet for the routes.
+
+**sidebar.tsx (extract)**
+```javascript
+export default function SidebarLayout() {
+  const navItems: NavItem[] = [
+    { path: "/", label: "Home" },
+    { path: "/catalog", label: "Catalog" },
+    { path: "/authors", label: "Authors" },
+    { path: "/genres", label: "Genres" },
+    { path: "/books", label: "Books" },
+    { path: "/instances", label: "Book Instances" },
+    { path: "/about", label: "About" },
+  ];
+```
+
+
 Populate the following route files with the following code.
 
 ### Catalog route
@@ -523,256 +564,597 @@ The next route is for the author: ```this code will need to be split in the same
 
 ### Author route
 
-**routes/catalog.authors.tsx**
+The authors.server.ts file communicates with the database and returns the data for the author route.
+
+The getters and virtuals are set to true so that the virtuals are included in the response.
+
+**routes/catalog.authors.server.ts**
 ```javascript
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
+import { connectDB } from "../db";
+import Author from "../models/author";
 
-import { json } from "@remix-run/node";
+export interface AuthorData {
+  _id: string;
+  first_name: string;
+  family_name: string;
+  date_of_birth: string | null;
+  date_of_death: string | null;
+  name: string;
+  date_of_birth_formatted: string;
+  date_of_death_formatted: string;
+  lifespan: string;
+  url: string;
+}
 
-import { useLoaderData, Link } from "@remix-run/react";
+export async function loadAuthors(): Promise<AuthorData[]> {
+  try {
+    console.log("Connecting to database...");
+    await connectDB();
+    console.log("Database connected, querying authors...");
 
-import Author, { IAuthor } from '../models/author';
+    const authors = await Author.find({}).exec();
 
+    console.log(`Loaded ${authors.length} authors`);
 
-export const loader: unknown = async () => {
-
-  const authors = await Author.find({}, null, { virtuals: true })
-    .sort([['family_name', 'ascending']])
-    .exec();
-
-  if (!authors) {
-    throw new Response("Not Found", { status: 404 });
+    // Convert to plain objects with virtuals and serialized dates
+    return authors.map((author: any) => {
+      // Convert to object with getters to include virtuals
+      const authorObj = author.toObject({ getters: true, virtuals: true });
+      
+      return {
+        _id: authorObj._id.toString(),
+        first_name: authorObj.first_name,
+        family_name: authorObj.family_name,
+        date_of_birth: author.date_of_birth
+          ? new Date(author.date_of_birth).toISOString()
+          : null,
+        date_of_death: author.date_of_death
+          ? new Date(author.date_of_death).toISOString()
+          : null,
+        name: authorObj.name || `${author.family_name}, ${author.first_name}`,
+        date_of_birth_formatted: authorObj.date_of_birth_formatted || "",
+        date_of_death_formatted: authorObj.date_of_death_formatted || "",
+        lifespan: authorObj.lifespan || "unknown",
+        url: authorObj.url || `/catalog/authors/${authorObj._id}`,
+      };
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("loadAuthors error:", errorMessage, error);
+    throw new Error(`Failed to load authors: ${errorMessage}`);
   }
+}
 
-  return json({ authors });
+```
+The loaded data is displayed by authors.tsx
+
+**routes/authors.tsx**
+```javascript
+import { type MetaFunction, Link } from "react-router";
+import type { Route } from "./+types/authors";
+
+import { loadAuthors, type AuthorData } from "./authors.server";
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      name: "description",
+      content: "Browse all authors in the library catalog",
+    },
+  ];
 };
 
+export async function loader(): Promise<{ authors: AuthorData[] }> {
+  try {
+    const authors = await loadAuthors();
+    return { authors };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Authors loader error:", errorMessage, error);
+    throw new Response(`Failed to load authors: ${errorMessage}`, {
+      status: 500,
+    });
+  }
+}
 
-export default function Catalog() {
-  const data = useLoaderData() as { authors: IAuthor[] };
-  //console.log(data);
+export default function Authors({ loaderData }: Route.ComponentProps) {
+  const { authors } = loaderData as { authors: AuthorData[] };
+
   return (
     <div>
-      <center><h1>Author List</h1></center>
+      <div className="text-center">
+        <h1>Author List</h1>
+      </div>
 
-      <Card style={{ width: '60em' }}>
-        <Card.Body>
-          <Card.Text>
-            <ListGroup>
-              {data.authors.map((author) => (
-                <ListGroup.Item className="card-text" key={author._id}>
-                  First Name: {author.first_name} <br />
-                  Name: {author.name} <br />
-                  Date of Birth: {author.date_of_birth_formatted}<br />
-                  Lifespan: {author.lifespan}<br />
-                  <Link to={author.url}>Details</Link>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Card.Text>
-        </Card.Body>
-      </Card>
-
+      <div className="card" style={{ maxWidth: "60em", margin: "0 auto" }}>
+        <div className="card-body">
+          <ul className="list-group list-group-flush">
+            {authors.length > 0 ? (
+              authors.map((author: AuthorData) => (
+                <li
+                  className="list-group-item"
+                  key={author._id}
+                  style={{ padding: "1rem" }}
+                >
+                  <div>
+                    <strong>{author.name}</strong>
+                  </div>
+                  <div className="text-muted small">
+                    <div>Born: {author.date_of_birth_formatted}</div>
+                    <div>Died: {author.date_of_death_formatted}</div>
+                    <div>{author.lifespan}</div>
+                  </div>
+                  <Link
+                    to={author.url}
+                    className="btn btn-sm btn-primary mt-2"
+                  >
+                    View Details
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <div className="alert alert-info">No authors found</div>
+            )}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
 ```
-
-The loader function is used to fetch the data from the database using appropriate mongoose commands.  In this case the query [find](https://mongoosejs.com/docs/api/query.html#Query.prototype.find()) is used to find the documents.  A sort is used to sort the documents.  A default function is returned by the router.  In this case, again, this is named "Catalog()". When the Catalog() function is called the loader function is executed and the data is returned to the function.  The data is then displayed in the function. In this case with a card component from bootstrap.
-
+The loader function in authors.tsx calls the loadAuthors() fuction of authors.server.ts. This is used to fetch the data from the database and return it as an array of AuthorData objects. The AuthorData objects are then used to display the data in the authors.tsx component.
 
 and also:
 
 ### Genre route
 
-**routes/catalog.genres.tsx**
+The function loadGenres is used to fetch the data from the database and return it as an array of Genre objects. 
+
+**routes/genres.server.ts**
 ```javascript
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
+import { connectDB } from "../db";
+import Genre from "../models/genre";
 
-import { json } from "@remix-run/node";
+export interface GenreData {
+  _id: string;
+  name: string;
+  url: string;
+}
 
-import { useLoaderData, Link } from "@remix-run/react";
+export async function loadGenres(): Promise<GenreData[]> {
+  try {
+    console.log("Connecting to database...");
+    await connectDB();
+    console.log("Database connected, querying genres...");
 
-import Genre, { IGenre } from '../models/genre';
+    const genres = await Genre.find({}).sort([["name", "ascending"]]).exec();
 
+    console.log(`Loaded ${genres.length} genres`);
 
-export const loader: unknown = async () => {
+    // Convert to plain objects with virtuals and serialized dates
+    return genres.map((genre: any) => {
+      // Convert to object with getters to include virtuals
+      const genreObj = genre.toObject({
+        getters: true,
+        virtuals: true,
+      });
 
-  const genres = await Genre.find({}, null, { virtuals: true })
-    .sort([['name', 'ascending']])
-    .exec();
-
-  if (!genres) {
-    throw new Response("Not Found", { status: 404 });
+      return {
+        _id: genreObj._id.toString(),
+        name: genreObj.name,
+        url:
+          genreObj.url || `/catalog/genres/${genreObj._id}`,
+      };
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("loadGenres error:", errorMessage, error);
+    throw new Error(`Failed to load genres: ${errorMessage}`);
   }
-
-  return json({ genres });
-};
-
-
-
-export default function Catalog() {
-  const data = useLoaderData() as { genres: IGenre[] };
-  //console.log(data);
-  return (
-    <div>
-      <center><h1>Genre List</h1></center>
-      <p>The library features the following book genres:</p>
-      <Card style={{ width: '60em' }}>
-        <Card.Body>
-          <Card.Text>
-            <ListGroup>
-              {data.genres.map((genre) => (
-                <ListGroup.Item className="card-text" key={genre._id}>
-                  Name: {genre.name} <br />
-                  <Link to={genre.url}>Details</Link>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Card.Text>
-        </Card.Body>
-      </Card>
-
-    </div>
-  );
 }
 ```
 
-The pattern of loader function and server side rendering is used for all routes.  This is a good pattern to use as it allows the data retrieval and display to be combined in a single module file.  Some other frameworks use a separate module for the data retrieval and a separate module for the display.
+The loader function in genres.tsx calls the loadGenres() function of genres.server.ts. This is used to fetch the data from the database and return it as an array of GenreData objects. The GenreData objects are then used to display the data in the genres.tsx component.
+
+**routes/catalog.genres.tsx**
+```javascript
+import { type MetaFunction, Link } from "react-router";
+import type { Route } from "./+types/genres";
+
+import { loadGenres, type GenreData } from "./genres.server";
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      name: "description",
+      content: "Books in the collection include these genres",
+    },
+  ];
+};
+
+export async function loader(): Promise<{ genres: GenreData[] }> {
+  try { 
+    const genres = await loadGenres();
+    return { genres };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Genres loader error:", errorMessage, error);
+    throw new Response(`Failed to load genres: ${errorMessage}`, {
+      status: 500,
+    });
+  }
+}
+
+export default function Genres({ loaderData }: Route.ComponentProps) {
+  const { genres } = loaderData as { genres: GenreData[] };
+
+  return (
+    <div>
+      <div className="text-center">
+        <h1>Genre List</h1>
+      </div>
+
+      <div className="card" style={{ maxWidth: "60em", margin: "0 auto" }}>
+        <div className="card-body">
+          <ul className="list-group list-group-flush">
+            {genres.length > 0 ? (
+              genres.map((genres: GenreData) => (
+                <li
+                  className="list-group-item"
+                  key={genres._id}
+                  style={{ padding: "1rem" }}
+                >
+                  <div>
+                    <strong>{genres.name}</strong>
+                  </div>
+                  <Link
+                    to={genres.url}
+                    className="btn btn-sm btn-primary mt-2"
+                  >
+                    View Details
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <div className="alert alert-info">No genres found</div>
+            )}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+```
+
+
+The pattern of loader function and server side rendering is used for all routes.  This is a good pattern to use as it allows the data retrieval and display to be combined in related module files.  Some other frameworks use a separate module for the data retrieval and a separate module for the display.
 
 and also:
 
 ### Book route
 
-**routes/catalog.books.tsx**
+The file books.ts contains the loader function for the book route.
+
+**routes/books.tsx**
 ```javascript
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
+import { type MetaFunction, Link } from "react-router";
+import type { Route } from "./+types/books";
 
-import { json } from "@remix-run/node";
+import { loadBooks, type BookData } from "./books.server";
 
-import { useLoaderData, Link} from "@remix-run/react";
-
-import Book, { IBook } from '../models/book';
-
-export const loader: unknown = async () => {
-
-  const books = await Book.find({}).populate('authors').populate('genres').exec();
-  if (!books) {
-    throw new Response("Not Found", { status: 404 });
-  }
-  return json({ books });
+export const meta: MetaFunction = () => {
+  return [
+    {
+      name: "description",
+      content: "Browse all books in the library catalog",
+    },
+  ];
 };
 
+export async function loader(): Promise<{ books: BookData[] }> {
+  try {
+    const books = await loadBooks();
+    return { books };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Books loader error:", errorMessage, error);
+    throw new Response(`Failed to load books: ${errorMessage}`, {
+      status: 500,
+    });
+  }
+}
 
-
-export default function Catalog() {
-  const data = useLoaderData() as { books: IBook[] };
+export default function Books({ loaderData }: Route.ComponentProps) {
+  const { books } = loaderData as { books: BookData[] };
 
   return (
     <div>
-      <center><h1>Book List</h1></center>
-      <p>The library has the following books:</p>
-      <Card style={{ width: '60em' }}>
-        <Card.Body>
-          <Card.Text>
-            <ListGroup>
-              {data.books.map((book) => (
-                <ListGroup.Item className="card-text" key={book._id} >
-                  Title: {book.title} <br />
-                  Authors:
-                  <ul>
-                    {book.authors.map((author) => (
-                      <li key={author._id}>
-                        {author.name}
-                      </li>
-                    ))}
-                  </ul>
+      <div className="text-center">
+        <h1>Books List</h1>
+      </div>
 
-                  {/*Description:{book.summary}<br /> */}
-                  Genres:
-                  {book.genres !== null && book.genres.length > 0 && (
-                    <ul>
-                      {book.genres.map((genre) => (
-                        <li key={genre._id}>
-                          {genre.name}
-                        </li>
-                      ))}
-                    </ul>
-                  )
-                  }
-                  ISBN: {book.isbn} <br />
-                  <Link to={book.url}>Details</Link>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Card.Text>
-        </Card.Body>
-      </Card>
-
+      <div className="card" style={{ maxWidth: "80em", margin: "0 auto" }}>
+        <div className="card-body">
+          <ul className="list-group list-group-flush">
+            {books.length > 0 ? (
+              books.map((book: BookData) => (
+                <li
+                  className="list-group-item"
+                  key={book._id}
+                  style={{ padding: "1rem" }}
+                >
+                  <div>
+                    <strong>{book.title}</strong>
+                  </div>
+                  <div className="text-muted small">
+                    <div>
+                      Authors:{" "}
+                      {book.authors
+                        .map((author) => author.name)
+                        .join(", ") || "Unknown"}
+                    </div>
+                    <div>ISBN: {book.isbn}</div>
+                    <div>
+                      Genres:{" "}
+                      {book.genres.map((genre) => genre.name).join(", ") ||
+                        "Unclassified"}
+                    </div>
+                    <div className="mt-2">{book.summary}</div>
+                  </div>
+                  <Link
+                    to={book.url}
+                    className="btn btn-sm btn-primary mt-2"
+                  >
+                    View Details
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <div className="alert alert-info">No books found</div>
+            )}
+          </ul>
+        </div>
+      </div>
     </div>
-
   );
 }
+
 ```
+The book.server.ts file is the server-side code for the book model.
+
+```javascript
+import { connectDB } from "../db";
+import Book from "../models/book";
+
+export interface BookData {
+  _id: string;
+  title: string;
+  authors: Array<{
+    _id: string;
+    first_name: string;
+    family_name: string;
+    name: string;
+  }>;
+  summary: string;
+  isbn: string;
+  genres: Array<{
+    _id: string;
+    name: string;
+  }>;
+  url: string;
+}
+
+export async function loadBooks(): Promise<BookData[]> {
+  try {
+    console.log("Connecting to database...");
+    await connectDB();
+    console.log("Database connected, querying books...");
+
+    const books = await Book.find({})
+      .populate("authors")
+      .populate("genres")
+      .exec();
+
+    console.log(`Loaded ${books.length} books`);
+
+    // Convert to plain objects with virtuals
+    return books.map((book: any) => {
+      // Convert to object with getters to include virtuals
+      const bookObj = book.toObject({
+        getters: true,
+        virtuals: true,
+      });
+
+      return {
+        _id: bookObj._id.toString(),
+        title: bookObj.title,
+        authors: (bookObj.authors || []).map((author: any) => ({
+          _id: author._id.toString(),
+          first_name: author.first_name,
+          family_name: author.family_name,
+          name: author.name || `${author.family_name}, ${author.first_name}`,
+        })),
+        summary: bookObj.summary,
+        isbn: bookObj.isbn,
+        genres: (bookObj.genres || []).map((genre: any) => ({
+          _id: genre._id.toString(),
+          name: genre.name,
+        })),
+        url: bookObj.url || `/catalog/books/${bookObj._id}`,
+      };
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("loadBooks error:", errorMessage, error);
+    throw new Error(`Failed to load books: ${errorMessage}`);
+  }
+}
+```
+
+
 and also:
 
 ### BookInstance route
 
-**routes/catalog.bookinstances.tsx**
+**routes/bookinstances.server.ts**
 ```javascript
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
+import { connectDB } from "../db";
+import BookInstance from "../models/bookinstance";
 
-import { json } from "@remix-run/node";
+export interface BookInstanceData {
+  _id: string;
+  book: {
+    _id: string;
+    title: string;
+  };
+  imprint: string;
+  status: "Available" | "Maintenance" | "Loaned" | "Reserved";
+  due_back: string | null;
+  due_back_formatted: string;
+  url: string;
+}
 
-import { useLoaderData } from "@remix-run/react";
+export async function loadBookInstances(): Promise<BookInstanceData[]> {
+  try {
+    console.log("Connecting to database...");
+    await connectDB();
+    console.log("Database connected, querying book instances...");
 
+    const bookInstances = await BookInstance.find({})
+      .populate("book")
+      .exec();
 
-import BookInstance, { IBookInstance } from '../models/bookinstance';
+    console.log(`Loaded ${bookInstances.length} book instances`);
 
+    // Convert to plain objects with virtuals
+    return bookInstances.map((instance: any) => {
+      // Convert to object with getters to include virtuals
+      const instanceObj = instance.toObject({
+        getters: true,
+        virtuals: true,
+      });
 
-export const loader: unknown = async () => {
-
-  //const instances = await BookInstance.find({book: '660e9425cd2a5343c986400a'}).exec();
-  const instances = await BookInstance.find().exec();
-  if (!instances) {
-    throw new Response("Not Found", { status: 404 });
+      return {
+        _id: instanceObj._id.toString(),
+        book: {
+          _id: instanceObj.book._id.toString(),
+          title: instanceObj.book.title,
+        },
+        imprint: instanceObj.imprint,
+        status: instanceObj.status,
+        due_back: instance.due_back
+          ? new Date(instance.due_back).toISOString()
+          : null,
+        due_back_formatted:
+          instanceObj.due_back_formatted || "In Library",
+        url: instanceObj.url || `/catalog/instances/${instanceObj._id}`,
+      };
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("loadBookInstances error:", errorMessage, error);
+    throw new Error(`Failed to load book instances: ${errorMessage}`);
   }
-  return json({ instances });
+}
+```
+
+**bookinstances.tsx
+```javascript
+import { type MetaFunction, Link } from "react-router";
+import type { Route } from "./+types/bookinstances";
+
+import { loadBookInstances, type BookInstanceData } from "./bookinstances.server";
+
+export const meta: MetaFunction = () => {
+  return [
+    {
+      name: "description",
+      content: "Browse all book instances in the library catalog",
+    },
+  ];
 };
 
+export async function loader(): Promise<{ bookInstances: BookInstanceData[] }> {
+  try {
+    const bookInstances = await loadBookInstances();
+    return { bookInstances };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("BookInstance loader error:", errorMessage, error);
+    throw new Response(`Failed to load book instances: ${errorMessage}`, {
+      status: 500,
+    });
+  }
+}
 
+export default function BookInstances({
+  loaderData,
+}: Route.ComponentProps) {
+  const { bookInstances } = loaderData as {
+    bookInstances: BookInstanceData[];
+  };
 
-export default function Catalog() {
-  const data = useLoaderData() as { instances: IBookInstance[] };
-  //console.log(data);
   return (
     <div>
-      <center><h1>Book List</h1></center>
-      <p>The library has the following books:</p>
-      <Card style={{ width: '60em' }}>
-        <Card.Body>
-          <Card.Text>
-            <ListGroup>
-              {data.instances.map((instance) => (
-                <ListGroup.Item className="card-text" key={instance._id} >
-                  Book: {instance.book} <br/>
-                  Imprint:{instance.imprint}<br/>
-                  Status:{instance.status}<br/> 
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Card.Text>
-        </Card.Body>
-      </Card>
+      <div className="text-center">
+        <h1>Book Instances</h1>
+      </div>
 
+      <div className="card" style={{ maxWidth: "80em", margin: "0 auto" }}>
+        <div className="card-body">
+          <ul className="list-group list-group-flush">
+            {bookInstances.length > 0 ? (
+              bookInstances.map((instance: BookInstanceData) => (
+                <li
+                  className="list-group-item"
+                  key={instance._id}
+                  style={{ padding: "1rem" }}
+                >
+                  <div>
+                    <strong>{instance.book.title}</strong>
+                  </div>
+                  <div className="text-muted small">
+                    <div>Imprint: {instance.imprint}</div>
+                    <div>
+                      Status:{" "}
+                      <span
+                        className={`badge ${
+                          instance.status === "Available"
+                            ? "bg-success"
+                            : instance.status === "Loaned"
+                              ? "bg-warning"
+                              : instance.status === "Reserved"
+                                ? "bg-info"
+                                : "bg-secondary"
+                        }`}
+                      >
+                        {instance.status}
+                      </span>
+                    </div>
+                    <div>Due Back: {instance.due_back_formatted}</div>
+                  </div>
+                  <Link
+                    to={instance.url}
+                    className="btn btn-sm btn-primary mt-2"
+                  >
+                    View Details
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <div className="alert alert-info">
+                No book instances found
+              </div>
+            )}
+          </ul>
+        </div>
+      </div>
     </div>
-
   );
 }
+
+
 ```
 
 
