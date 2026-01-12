@@ -37,6 +37,7 @@
 - [Claude](https://claude.ai/)
 - [Gemini](https://gemini.google.com/app)
 - [Jan](https://jan.ai/)
+- [OpenCode](https://opencode.ai/)
 - [Perplexity](https://www.perplexity.ai/)
 - 
 ### Browser
