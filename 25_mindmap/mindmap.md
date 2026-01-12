@@ -33,8 +33,10 @@
 
 ### Assistants
 
+- [Amp](https://ampcode.com/-)
 - [ChatGPT](https://chatgpt.com/)
 - [Claude](https://claude.ai/)
+- [Continue](https://www.continue.dev/)
 - [Gemini](https://gemini.google.com/app)
 - [Jan](https://jan.ai/)
 - [OpenCode](https://opencode.ai/)
@@ -47,6 +49,7 @@
 - [Pinokio](https://pinokio.co/)
 - [Sigma](https://www.sigmabrowser.com/)
 - [Tavily](https://tavily.com/)
+
 
 ### Community
 - [Hugging Face](https://huggingface.co/blog)
@@ -158,6 +161,12 @@
 - [Figma](https://www.figma.com/)
 - [Uxpin](https://www.uxpin.com/)
   
+## Code Tools
+### Formatters
+- [Biome](https://biomejs.dev/)
+- [Prettier](https://prettier.io/)
+- [Ruff](https://docs.astral.sh/ruff/)
+  
 ## Databases
 ### General
 - [Convex](https://www.convex.dev/)
@@ -196,6 +205,7 @@
 - [PocketBase:](https://pocketbase.io/)
 - [PostgreSQL:](https://www.postgresql.org/)
 - [SQLite](https://sqlite.org/)
+- [Turso](https://turso.tech/)
 
 ### NoCode/LowCode databases
 - [Airtable:](https://airtable.com/)
@@ -206,7 +216,11 @@
 - [Xano:](https://www.xano.com/)
 - 
 
-  
+## Editors
+- [Cursor](https://cursor.com/download)
+- [VSCODE](https://code.visualstudio.com/)
+- [Windsurf](https://windsurf.com/)
+- [Zed](https://zed.dev/)  
 
 
 
